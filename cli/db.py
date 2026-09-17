@@ -1,6 +1,6 @@
 """Unified Database Access Layer for Open-Agent-DB
 Searches across both SkillsMP Catalog (637k+ skills) and Universal MCP Registry (150k+ MCP servers/tools)
-with full Domain and Category taxonomy support and lightning-fast FTS5 queries.
+with full Domain, Category, and SOC-aligned Occupation taxonomy support and fast FTS5 queries.
 """
 
 import json
@@ -18,6 +18,82 @@ DEFAULT_SEARCH_PATHS = [
 ]
 
 INDEX_FALLBACK_PATH = Path(__file__).resolve().parent.parent / "web" / "data" / "catalog_index.json"
+STATS_PATH = Path(__file__).resolve().parent.parent / "web" / "data" / "stats.json"
+
+OCCUPATION_DEFINITIONS = [
+    {
+        "id": "software-engineer",
+        "title": "Software & Web Engineers",
+        "soc": "SOC 15-1252",
+        "icon": "💻",
+        "desc": "Full-stack, backend, frontend, architecture patterns, and coding workflows.",
+    },
+    {
+        "id": "devops-sre",
+        "title": "DevOps & SRE Engineers",
+        "soc": "SOC 15-1250",
+        "icon": "🚀",
+        "desc": "CI/CD pipelines, container orchestration, Kubernetes, Docker, and cloud infrastructure.",
+    },
+    {
+        "id": "ai-data-scientist",
+        "title": "AI Specialists & Data Scientists",
+        "soc": "SOC 15-2051",
+        "icon": "🧠",
+        "desc": "LLM prompts, machine learning models, RAG systems, embeddings, and data analysis.",
+    },
+    {
+        "id": "database-admin",
+        "title": "Database Administrators & Engineers",
+        "soc": "SOC 15-1242",
+        "icon": "🗄️",
+        "desc": "SQL optimization, database connections, schema migrations, and vector stores.",
+    },
+    {
+        "id": "security-qa",
+        "title": "Security Analysts & QA Engineers",
+        "soc": "SOC 15-1212",
+        "icon": "🛡️",
+        "desc": "Vulnerability auditing, code review, fuzzing, testing, and compliance.",
+    },
+    {
+        "id": "product-pm",
+        "title": "Product & Project Managers",
+        "soc": "SOC 11-1021",
+        "icon": "📈",
+        "desc": "Agile roadmaps, task coordination, Linear, Jira, and team communication.",
+    },
+    {
+        "id": "designer-media",
+        "title": "UI/UX Designers & Media Creators",
+        "soc": "SOC 27-1024",
+        "icon": "🎨",
+        "desc": "Design systems, SVG icons, Figma assets, and creative media generation.",
+    },
+    {
+        "id": "researcher",
+        "title": "Researchers & Academic Scientists",
+        "soc": "SOC 19-1029",
+        "icon": "🔬",
+        "desc": "Literature search, arXiv, PubMed, bioinformatics, chemistry, and LaTeX.",
+    },
+    {
+        "id": "business-finance",
+        "title": "Business & Financial Analysts",
+        "soc": "SOC 13-2051",
+        "icon": "📊",
+        "desc": "Market intelligence, valuation models, spreadsheets, and financial metrics.",
+    },
+    {
+        "id": "tech-writer",
+        "title": "Technical Writers & Educators",
+        "soc": "SOC 27-3042",
+        "icon": "📚",
+        "desc": "API documentation, markdown linting, developer guides, and wikis.",
+    },
+]
+
+OCCUPATION_MAP = {o["id"]: o for o in OCCUPATION_DEFINITIONS}
 
 
 def classify_mcp(name: str, desc: str) -> Tuple[str, str]:
@@ -38,6 +114,44 @@ def classify_mcp(name: str, desc: str) -> Tuple[str, str]:
     if any(k in text for k in ["code", "python", "typescript", "react", "rust", "go", "node", "compiler", "debug", "api"]):
         return "Development", "Developer Tools"
     return "Tools", "Utilities"
+
+
+def classify_occupation(name: str, desc: str, dom: str, cat: str) -> str:
+    """Map any Skill or MCP server to an SOC-aligned occupation."""
+    text = f"{name} {desc or ''}".lower()
+    if dom == "Databases" or any(k in cat for k in ["Databases", "SQL Databases", "Database Tools"]) or any(k in text for k in ["postgres", "mysql", "sqlite", "redis", "mongodb", "prisma", "supabase"]):
+        return "database-admin"
+    if dom == "DevOps" or any(k in cat for k in ["DevOps", "CI/CD", "Git Workflows", "Containers", "Monitoring", "Cloud"]) or any(k in text for k in ["docker", "k8s", "kubernetes", "terraform", "aws", "azure", "gcp", "deploy"]):
+        return "devops-sre"
+    if dom == "Data & AI" or any(k in cat for k in ["LLM & AI", "Machine Learning", "Data Analysis", "Data Engineering"]) or any(k in text for k in ["openai", "anthropic", "rag", "embedding", "model", "agent", "gemini", "deepseek"]):
+        return "ai-data-scientist"
+    if dom == "Testing & Security" or any(k in cat for k in ["Security", "Testing", "Code Quality"]) or any(k in text for k in ["security", "vulnerability", "penetration", "audit", "scan", "fuzz"]):
+        return "security-qa"
+    if cat in ["Project Management", "Productivity & Collab"] or any(k in text for k in ["jira", "linear", "trello", "notion", "slack", "roadmap", "agile", "scrum", "project management"]):
+        return "product-pm"
+    if dom == "Research" or any(k in cat for k in ["Academic", "Bioinformatics", "Computational Chemistry", "Scientific Computing"]) or any(k in text for k in ["arxiv", "pubmed", "scholar", "paper", "literature review", "bioinformatics"]):
+        return "researcher"
+    if dom == "Content & Media" or cat in ["Design", "Media", "Content Creation"] or any(k in text for k in ["figma", "svg", "ui/ux", "canvas", "color palette", "sketch", "illustration"]):
+        return "designer-media"
+    if dom == "Business" or cat in ["Finance & Investment", "E-commerce", "Sales & Marketing", "Real Estate & Legal", "DeFi"] or any(k in text for k in ["finance", "stock", "accounting", "salesforce", "stripe", "invoice", "crypto trading"]):
+        return "business-finance"
+    if dom == "Documentation" or cat in ["Technical Docs", "Knowledge Base", "Education"] or any(k in text for k in ["markdown", "docs", "readme", "documentation", "wiki", "tutorial"]):
+        return "tech-writer"
+    return "software-engineer"
+
+
+def match_occupation_query(occ_id: str, query: str) -> bool:
+    """Helper to check if occupation ID or title matches query string."""
+    q = query.lower().strip()
+    if q in ("all", "*"):
+        return True
+    if occ_id.lower() == q:
+        return True
+    occ_info = OCCUPATION_MAP.get(occ_id)
+    if occ_info:
+        if q in occ_info["title"].lower() or q in occ_info["id"].lower() or q in occ_info["soc"].lower():
+            return True
+    return False
 
 
 class UnifiedAgentDB:
@@ -76,6 +190,18 @@ class UnifiedAgentDB:
             return conn
         except Exception:
             return None
+
+    def get_occupations(self) -> List[Dict[str, Any]]:
+        """Return list of SOC-aligned occupations with total and breakdown counts."""
+        if STATS_PATH.exists():
+            try:
+                with open(STATS_PATH, "r", encoding="utf-8") as f:
+                    stats = json.load(f)
+                if "occupations" in stats:
+                    return stats["occupations"]
+            except Exception:
+                pass
+        return OCCUPATION_DEFINITIONS
 
     def get_stats(self) -> Dict[str, Any]:
         """Aggregate totals across all connected database files."""
@@ -128,6 +254,7 @@ class UnifiedAgentDB:
         min_stars: int = 0,
         domain: Optional[str] = None,      # 'Data & AI', 'DevOps', 'Databases', etc.
         category: Optional[str] = None,    # 'Machine Learning', 'PostgreSQL', etc.
+        occupation: Optional[str] = None,  # 'software-engineer', 'devops-sre', etc.
         limit: int = 40,
     ) -> List[Dict[str, Any]]:
         """Search across both Skills and MCP registries with unified ranking and taxonomy filtering."""
@@ -162,7 +289,7 @@ class UnifiedAgentDB:
                         params.append(min_stars)
 
                     where_sql = ("WHERE " + " AND ".join(where_clauses)) if where_clauses else ""
-                    fetch_limit = limit * 3 if (domain or category) else limit
+                    fetch_limit = limit * 4 if (domain or category or occupation) else limit
                     query_sql = f"""
                     SELECT id, name, author, description, stars, use_count,
                            source_platform, item_type, github_url, install_command, verified
@@ -181,13 +308,21 @@ class UnifiedAgentDB:
                             dom = "Development"
                             cat = "Cursor Rules"
 
+                        occ = classify_occupation(d.get("name") or "", d.get("description") or "", dom, cat)
+                        occ_meta = OCCUPATION_MAP.get(occ, {})
+
                         if domain and domain.lower() != "all" and dom.lower() != domain.lower():
                             continue
                         if category and category.lower() != "all" and cat.lower() != category.lower():
                             continue
+                        if occupation and not match_occupation_query(occ, occupation):
+                            continue
 
                         d["domain"] = dom
                         d["category"] = cat
+                        d["occupation"] = occ
+                        d["occupation_title"] = occ_meta.get("title", occ)
+                        d["soc"] = occ_meta.get("soc", "")
                         results.append(d)
                 except Exception:
                     pass
@@ -217,7 +352,22 @@ class UnifiedAgentDB:
                         where_clauses.append("(c.title = ? OR c.slug = ?)")
                         params.extend([category, category])
 
-                    if fts_query:
+                    fetch_limit = limit * 3 if occupation else limit
+
+                    if not fts_query and not domain and not category:
+                        where_sql = ("WHERE " + " AND ".join(where_clauses)) if where_clauses else ""
+                        query_sql = f"""
+                        SELECT s.id, s.name, s.author, s.description, s.stars, s.forks,
+                               s.github_url, s.skill_url, s.is_synced,
+                               (SELECT c.domain FROM skill_categories sc JOIN categories c ON sc.category_slug = c.slug WHERE sc.skill_id = s.id LIMIT 1) as domain,
+                               (SELECT c.title FROM skill_categories sc JOIN categories c ON sc.category_slug = c.slug WHERE sc.skill_id = s.id LIMIT 1) as category
+                        FROM skills s
+                        {where_sql}
+                        ORDER BY s.stars DESC
+                        LIMIT ?
+                        """
+                        exec_params = params + [fetch_limit]
+                    elif fts_query:
                         where_sql = ("AND " + " AND ".join(where_clauses)) if where_clauses else ""
                         query_sql = f"""
                         SELECT s.id, s.name, s.author, s.description, s.stars, s.forks,
@@ -232,7 +382,7 @@ class UnifiedAgentDB:
                         ORDER BY s.stars DESC
                         LIMIT ?
                         """
-                        exec_params = [fts_query] + params + [limit]
+                        exec_params = [fts_query] + params + [fetch_limit]
                     else:
                         where_sql = ("WHERE " + " AND ".join(where_clauses)) if where_clauses else ""
                         query_sql = f"""
@@ -247,37 +397,31 @@ class UnifiedAgentDB:
                         ORDER BY s.stars DESC
                         LIMIT ?
                         """
-                        exec_params = params + [limit]
+                        exec_params = params + [fetch_limit]
 
                     rows = conn.execute(query_sql, exec_params).fetchall()
                     for r in rows:
                         d = dict(r)
+                        dom = d.get("domain") or "Development"
+                        cat = d.get("category") or "General Skill"
+                        occ = classify_occupation(d.get("name") or "", d.get("description") or "", dom, cat)
+                        occ_meta = OCCUPATION_MAP.get(occ, {})
+
+                        if occupation and not match_occupation_query(occ, occupation):
+                            continue
+
                         d["source_platform"] = "skillsmp"
                         d["item_type"] = "skill"
-                        d["domain"] = d.get("domain") or "Development"
-                        d["category"] = d.get("category") or "General Skill"
+                        d["domain"] = dom
+                        d["category"] = cat
+                        d["occupation"] = occ
+                        d["occupation_title"] = occ_meta.get("title", occ)
+                        d["soc"] = occ_meta.get("soc", "")
                         d["use_count"] = d.get("forks", 0)
                         d["install_command"] = f"open-agent install {d['id']}"
                         results.append(d)
                 except Exception as e:
-                    # Fallback to simple LIKE if FTS expression has issues
-                    try:
-                        like_params = [f"%{cleaned_query}%", limit]
-                        rows = conn.execute(
-                            "SELECT id, name, author, description, stars, forks FROM skills WHERE name LIKE ? ORDER BY stars DESC LIMIT ?",
-                            like_params
-                        ).fetchall()
-                        for r in rows:
-                            d = dict(r)
-                            d["source_platform"] = "skillsmp"
-                            d["item_type"] = "skill"
-                            d["domain"] = "Development"
-                            d["category"] = "General Skill"
-                            d["use_count"] = d.get("forks", 0)
-                            d["install_command"] = f"open-agent install {d['id']}"
-                            results.append(d)
-                    except Exception:
-                        pass
+                    pass
                 finally:
                     conn.close()
 
@@ -298,10 +442,15 @@ class UnifiedAgentDB:
                         continue
                     if category and category.lower() != "all" and item.get("cat", "").lower() != category.lower():
                         continue
+                    occ = item.get("occ") or classify_occupation(item.get("n", ""), item.get("d", ""), item.get("dom", ""), item.get("cat", ""))
+                    if occupation and not match_occupation_query(occ, occupation):
+                        continue
                     if tokens:
-                        blob = f"{item.get('n', '')} {item.get('d', '')} {item.get('a', '')} {item.get('dom', '')} {item.get('cat', '')}".lower()
+                        blob = f"{item.get('n', '')} {item.get('d', '')} {item.get('a', '')} {item.get('dom', '')} {item.get('cat', '')} {occ}".lower()
                         if not all(t in blob for t in tokens):
                             continue
+
+                    occ_meta = OCCUPATION_MAP.get(occ, {})
                     results.append({
                         "id": item.get("id"),
                         "name": item.get("n"),
@@ -313,6 +462,9 @@ class UnifiedAgentDB:
                         "item_type": item.get("t"),
                         "domain": item.get("dom"),
                         "category": item.get("cat"),
+                        "occupation": occ,
+                        "occupation_title": occ_meta.get("title", occ),
+                        "soc": occ_meta.get("soc", ""),
                         "github_url": item.get("g"),
                         "install_command": item.get("i"),
                         "verified": item.get("v", 0),
@@ -335,8 +487,13 @@ class UnifiedAgentDB:
                     if row:
                         d = dict(row)
                         dom, cat = classify_mcp(d.get("name") or "", d.get("description") or "")
+                        occ = classify_occupation(d.get("name") or "", d.get("description") or "", dom, cat)
+                        occ_meta = OCCUPATION_MAP.get(occ, {})
                         d["domain"] = dom
                         d["category"] = cat
+                        d["occupation"] = occ
+                        d["occupation_title"] = occ_meta.get("title", occ)
+                        d["soc"] = occ_meta.get("soc", "")
                         if d.get("raw_json"):
                             try:
                                 d["raw"] = json.loads(d["raw_json"])
@@ -382,6 +539,12 @@ class UnifiedAgentDB:
                             d["domain"] = "Development"
                             d["category"] = "General Skill"
 
+                        occ = classify_occupation(d.get("name") or "", d.get("description") or "", d["domain"], d["category"])
+                        occ_meta = OCCUPATION_MAP.get(occ, {})
+                        d["occupation"] = occ
+                        d["occupation_title"] = occ_meta.get("title", occ)
+                        d["soc"] = occ_meta.get("soc", "")
+
                         if d.get("raw_json"):
                             try:
                                 d["raw"] = json.loads(d["raw_json"])
@@ -400,6 +563,8 @@ class UnifiedAgentDB:
                     cached_items = json.load(f)
                 for item in cached_items:
                     if item.get("id") == identifier or (item.get("n") and item.get("n").lower() == identifier.lower()):
+                        occ = item.get("occ") or classify_occupation(item.get("n", ""), item.get("d", ""), item.get("dom", ""), item.get("cat", ""))
+                        occ_meta = OCCUPATION_MAP.get(occ, {})
                         return {
                             "id": item.get("id"),
                             "name": item.get("n"),
@@ -411,6 +576,9 @@ class UnifiedAgentDB:
                             "item_type": item.get("t"),
                             "domain": item.get("dom"),
                             "category": item.get("cat"),
+                            "occupation": occ,
+                            "occupation_title": occ_meta.get("title", occ),
+                            "soc": occ_meta.get("soc", ""),
                             "github_url": item.get("g"),
                             "install_command": item.get("i"),
                             "verified": item.get("v", 0),

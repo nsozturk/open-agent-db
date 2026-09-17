@@ -1,7 +1,7 @@
 {
   "total_ecosystem_assets": 788158,
   "total_skills_indexed": 637876,
-  "total_skills_synced": 327234,
+  "total_skills_synced": 327969,
   "total_mcp_servers": 113566,
   "web_index_count": 26930,
   "domains": [
@@ -338,6 +338,108 @@
     {
       "category": "Culinary Arts",
       "count": 3
+    }
+  ],
+  "occupations": [
+    {
+      "id": "software-engineer",
+      "title": "Software & Web Engineers",
+      "soc": "SOC 15-1252",
+      "icon": "💻",
+      "desc": "Full-stack, backend, frontend, architecture patterns, and coding workflows.",
+      "total_count": 5937,
+      "skills_count": 4398,
+      "mcps_count": 1539
+    },
+    {
+      "id": "devops-sre",
+      "title": "DevOps & SRE Engineers",
+      "soc": "SOC 15-1250",
+      "icon": "🚀",
+      "desc": "CI/CD pipelines, container orchestration, Kubernetes, Docker, and cloud infrastructure.",
+      "total_count": 2761,
+      "skills_count": 2370,
+      "mcps_count": 391
+    },
+    {
+      "id": "ai-data-scientist",
+      "title": "AI Specialists & Data Scientists",
+      "soc": "SOC 15-2051",
+      "icon": "🧠",
+      "desc": "LLM prompts, machine learning models, RAG systems, embeddings, and data analysis.",
+      "total_count": 10933,
+      "skills_count": 8591,
+      "mcps_count": 2342
+    },
+    {
+      "id": "database-admin",
+      "title": "Database Administrators & Engineers",
+      "soc": "SOC 15-1242",
+      "icon": "🗄️",
+      "desc": "SQL optimization, database connections, schema migrations, and vector stores.",
+      "total_count": 730,
+      "skills_count": 490,
+      "mcps_count": 240
+    },
+    {
+      "id": "security-qa",
+      "title": "Security Analysts & QA Engineers",
+      "soc": "SOC 15-1212",
+      "icon": "🛡️",
+      "desc": "Vulnerability auditing, code review, fuzzing, testing, and compliance.",
+      "total_count": 2459,
+      "skills_count": 2262,
+      "mcps_count": 197
+    },
+    {
+      "id": "product-pm",
+      "title": "Product & Project Managers",
+      "soc": "SOC 11-1021",
+      "icon": "📈",
+      "desc": "Agile roadmaps, task coordination, Linear, Jira, and team communication.",
+      "total_count": 437,
+      "skills_count": 378,
+      "mcps_count": 59
+    },
+    {
+      "id": "designer-media",
+      "title": "UI/UX Designers & Media Creators",
+      "soc": "SOC 27-1024",
+      "icon": "🎨",
+      "desc": "Design systems, SVG icons, Figma assets, and creative media generation.",
+      "total_count": 878,
+      "skills_count": 859,
+      "mcps_count": 19
+    },
+    {
+      "id": "researcher",
+      "title": "Researchers & Academic Scientists",
+      "soc": "SOC 19-1029",
+      "icon": "🔬",
+      "desc": "Literature search, arXiv, PubMed, bioinformatics, chemistry, and LaTeX.",
+      "total_count": 511,
+      "skills_count": 492,
+      "mcps_count": 19
+    },
+    {
+      "id": "business-finance",
+      "title": "Business & Financial Analysts",
+      "soc": "SOC 13-2051",
+      "icon": "📊",
+      "desc": "Market intelligence, valuation models, spreadsheets, and financial metrics.",
+      "total_count": 1238,
+      "skills_count": 1164,
+      "mcps_count": 74
+    },
+    {
+      "id": "tech-writer",
+      "title": "Technical Writers & Educators",
+      "soc": "SOC 27-3042",
+      "icon": "📚",
+      "desc": "API documentation, markdown linting, developer guides, and wikis.",
+      "total_count": 1046,
+      "skills_count": 935,
+      "mcps_count": 111
     }
   ],
   "platforms": {

@@ -67,10 +67,31 @@ function cmdStats() {
   console.log(`\n  ${c.bold}${c.white}Total Ecosystem Assets:${c.reset}   ${c.bold}${c.yellow}${totalAssets.toLocaleString()}${c.reset}\n`);
 }
 
+function cmdOccupations() {
+  const stats = loadStats();
+  const occupations = stats?.occupations || [];
+
+  console.log(`${c.magenta}${c.bold}💼 AI Agent Skills & MCP Servers Mapped by Career Occupation (SOC Classification)${c.reset}\n`);
+
+  if (occupations.length === 0) {
+    console.log(`${c.yellow}No occupation statistics found.${c.reset}\n`);
+    return;
+  }
+
+  occupations.forEach(o => {
+    console.log(`  ${o.icon} ${c.bold}${c.white}${o.title}${c.reset} ${c.yellow}(${o.soc})${c.reset} — ${c.green}${o.total_count?.toLocaleString()} assets${c.reset} (${c.cyan}${o.skills_count?.toLocaleString()} skills${c.reset}, ${c.green}${o.mcps_count?.toLocaleString()} MCPs${c.reset})`);
+    console.log(`     ${c.dim}${o.desc}${c.reset}`);
+    console.log(`     ${c.dim}Filter:${c.reset} ${c.cyan}npx open-agent-db search --occupation ${o.id}${c.reset}\n`);
+  });
+
+  console.log(`${c.dim}Tip: Run 'npx open-agent-db search <query> --occupation <id>' to explore a career track.${c.reset}\n`);
+}
+
 function cmdSearch(args) {
   let typeFilter = null;
   let domainFilter = null;
   let categoryFilter = null;
+  let occupationFilter = null;
   let minStars = 0;
   let limit = 20;
   const queryWords = [];
@@ -79,6 +100,8 @@ function cmdSearch(args) {
     const arg = args[i];
     if (arg === '--type' && args[i + 1]) {
       typeFilter = args[++i];
+    } else if (arg === '--occupation' && args[i + 1]) {
+      occupationFilter = args[++i].toLowerCase();
     } else if (arg === '--domain' && args[i + 1]) {
       domainFilter = args[++i].toLowerCase();
     } else if (arg === '--category' && args[i + 1]) {
@@ -99,12 +122,16 @@ function cmdSearch(args) {
 
   const matched = items.filter(item => {
     if (typeFilter && item.t !== typeFilter) return false;
+    if (occupationFilter && occupationFilter !== 'all') {
+      const occ = (item.occ || '').toLowerCase();
+      if (occ !== occupationFilter && !occ.includes(occupationFilter)) return false;
+    }
     if (domainFilter && domainFilter !== 'all' && (item.dom || '').toLowerCase() !== domainFilter) return false;
     if (categoryFilter && categoryFilter !== 'all' && (item.cat || '').toLowerCase() !== categoryFilter) return false;
     if (minStars > 0 && (item.s || 0) < minStars) return false;
 
     if (tokens.length > 0) {
-      const target = `${item.n} ${item.d || ''} ${item.a || ''} ${item.dom || ''} ${item.cat || ''}`.toLowerCase();
+      const target = `${item.n} ${item.d || ''} ${item.a || ''} ${item.dom || ''} ${item.cat || ''} ${item.occ || ''}`.toLowerCase();
       for (let t of tokens) {
         if (!target.includes(t)) return false;
       }
@@ -129,8 +156,9 @@ function cmdSearch(args) {
     const starsStr = r.s > 0 ? `${c.yellow}⭐ ${r.s.toLocaleString()}${c.reset}` : `${c.dim}-${c.reset}`;
     const desc = (r.d || 'No description').replace(/\n/g, ' ').substring(0, 55);
     const domCat = `${r.dom || 'General'} › ${r.cat || 'Skill'}`;
+    const occTag = r.occ ? ` [${r.occ}]` : '';
 
-    console.log(`  ${typeStr} ${c.bold}${c.white}${r.n}${c.reset} ${c.magenta}[${domCat}]${c.reset} ${c.dim}by ${r.a}${c.reset} (${r.p})`);
+    console.log(`  ${typeStr} ${c.bold}${c.white}${r.n}${c.reset} ${c.magenta}[${domCat}]${c.yellow}${occTag}${c.reset} ${c.dim}by ${r.a}${c.reset} (${r.p})`);
     console.log(`     ${starsStr} | ${c.dim}${desc}...${c.reset}`);
     const installCmd = r.i || (isMcp ? `npx -y ${r.n}` : `open-agent install ${r.id}`);
     console.log(`     ${c.dim}Install:${c.reset} ${c.cyan}${installCmd}${c.reset}\n`);
@@ -263,6 +291,9 @@ function main() {
     case 'stats':
       cmdStats();
       break;
+    case 'occupations':
+      cmdOccupations();
+      break;
     case 'search':
       cmdSearch(args.slice(1));
       break;
@@ -281,11 +312,12 @@ function main() {
     default:
       console.log(`${c.bold}Usage:${c.reset} npx open-agent-db <command> [options]\n`);
       console.log(`Commands:`);
-      console.log(`  ${c.cyan}search <query>${c.reset}     Search across 800K+ skills & MCP servers`);
-      console.log(`  ${c.cyan}info <id>${c.reset}          Show asset metadata & description`);
-      console.log(`  ${c.cyan}install <id>${c.reset}       Get MCP JSON configuration or install skill`);
-      console.log(`  ${c.cyan}stats${c.reset}              Show catalog overview metrics`);
-      console.log(`  ${c.cyan}serve [--port N]${c.reset}   Launch interactive web search UI\n`);
+      console.log(`  ${c.cyan}search <query>${c.reset}            Search across 800K+ skills & MCP servers`);
+      console.log(`  ${c.cyan}occupations${c.reset}               List career mappings (SOC codes) for Skills & MCPs`);
+      console.log(`  ${c.cyan}info <id>${c.reset}                 Show asset metadata & description`);
+      console.log(`  ${c.cyan}install <id>${c.reset}              Get MCP JSON configuration or install skill`);
+      console.log(`  ${c.cyan}stats${c.reset}                     Show catalog overview metrics`);
+      console.log(`  ${c.cyan}serve [--port N]${c.reset}          Launch interactive web search UI\n`);
       break;
   }
 }

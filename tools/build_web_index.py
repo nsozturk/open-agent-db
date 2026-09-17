@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Build Static Web Index for GitHub Pages & Local Explorer
 Extracts, classifies, and curates top skills & MCP servers from SQLite into a compact, minified JSON index
-with rich Domain and Category taxonomy (like skillsmp.com).
+with rich Domain, Category, and SOC Occupation taxonomy.
 """
 
 import gzip
@@ -22,6 +22,79 @@ OUTPUT_DIR = ROOT_DIR / "web" / "data"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 INDEX_FILE = OUTPUT_DIR / "catalog_index.json"
 STATS_FILE = OUTPUT_DIR / "stats.json"
+
+OCCUPATION_DEFINITIONS = [
+    {
+        "id": "software-engineer",
+        "title": "Software & Web Engineers",
+        "soc": "SOC 15-1252",
+        "icon": "💻",
+        "desc": "Full-stack, backend, frontend, architecture patterns, and coding workflows.",
+    },
+    {
+        "id": "devops-sre",
+        "title": "DevOps & SRE Engineers",
+        "soc": "SOC 15-1250",
+        "icon": "🚀",
+        "desc": "CI/CD pipelines, container orchestration, Kubernetes, Docker, and cloud infrastructure.",
+    },
+    {
+        "id": "ai-data-scientist",
+        "title": "AI Specialists & Data Scientists",
+        "soc": "SOC 15-2051",
+        "icon": "🧠",
+        "desc": "LLM prompts, machine learning models, RAG systems, embeddings, and data analysis.",
+    },
+    {
+        "id": "database-admin",
+        "title": "Database Administrators & Engineers",
+        "soc": "SOC 15-1242",
+        "icon": "🗄️",
+        "desc": "SQL optimization, database connections, schema migrations, and vector stores.",
+    },
+    {
+        "id": "security-qa",
+        "title": "Security Analysts & QA Engineers",
+        "soc": "SOC 15-1212",
+        "icon": "🛡️",
+        "desc": "Vulnerability auditing, code review, fuzzing, testing, and compliance.",
+    },
+    {
+        "id": "product-pm",
+        "title": "Product & Project Managers",
+        "soc": "SOC 11-1021",
+        "icon": "📈",
+        "desc": "Agile roadmaps, task coordination, Linear, Jira, and team communication.",
+    },
+    {
+        "id": "designer-media",
+        "title": "UI/UX Designers & Media Creators",
+        "soc": "SOC 27-1024",
+        "icon": "🎨",
+        "desc": "Design systems, SVG icons, Figma assets, and creative media generation.",
+    },
+    {
+        "id": "researcher",
+        "title": "Researchers & Academic Scientists",
+        "soc": "SOC 19-1029",
+        "icon": "🔬",
+        "desc": "Literature search, arXiv, PubMed, bioinformatics, chemistry, and LaTeX.",
+    },
+    {
+        "id": "business-finance",
+        "title": "Business & Financial Analysts",
+        "soc": "SOC 13-2051",
+        "icon": "📊",
+        "desc": "Market intelligence, valuation models, spreadsheets, and financial metrics.",
+    },
+    {
+        "id": "tech-writer",
+        "title": "Technical Writers & Educators",
+        "soc": "SOC 27-3042",
+        "icon": "📚",
+        "desc": "API documentation, markdown linting, developer guides, and wikis.",
+    },
+]
 
 
 def classify_mcp(name: str, desc: str) -> tuple:
@@ -44,18 +117,50 @@ def classify_mcp(name: str, desc: str) -> tuple:
     return "Tools", "Utilities"
 
 
+def classify_occupation(name: str, desc: str, dom: str, cat: str) -> str:
+    """Map any Skill or MCP server to an SOC-aligned occupation."""
+    text = f"{name} {desc or ''}".lower()
+
+    if dom == "Databases" or any(k in cat for k in ["Databases", "SQL Databases", "Database Tools"]) or any(k in text for k in ["postgres", "mysql", "sqlite", "redis", "mongodb", "prisma", "supabase"]):
+        return "database-admin"
+    if dom == "DevOps" or any(k in cat for k in ["DevOps", "CI/CD", "Git Workflows", "Containers", "Monitoring", "Cloud"]) or any(k in text for k in ["docker", "k8s", "kubernetes", "terraform", "aws", "azure", "gcp", "deploy"]):
+        return "devops-sre"
+    if dom == "Data & AI" or any(k in cat for k in ["LLM & AI", "Machine Learning", "Data Analysis", "Data Engineering"]) or any(k in text for k in ["openai", "anthropic", "rag", "embedding", "model", "agent", "gemini", "deepseek"]):
+        return "ai-data-scientist"
+    if dom == "Testing & Security" or any(k in cat for k in ["Security", "Testing", "Code Quality"]) or any(k in text for k in ["security", "vulnerability", "penetration", "audit", "scan", "fuzz"]):
+        return "security-qa"
+    if cat in ["Project Management", "Productivity & Collab"] or any(k in text for k in ["jira", "linear", "trello", "notion", "slack", "roadmap", "agile", "scrum", "project management"]):
+        return "product-pm"
+    if dom == "Research" or any(k in cat for k in ["Academic", "Bioinformatics", "Computational Chemistry", "Scientific Computing"]) or any(k in text for k in ["arxiv", "pubmed", "scholar", "paper", "literature review", "bioinformatics"]):
+        return "researcher"
+    if dom == "Content & Media" or cat in ["Design", "Media", "Content Creation"] or any(k in text for k in ["figma", "svg", "ui/ux", "canvas", "color palette", "sketch", "illustration"]):
+        return "designer-media"
+    if dom == "Business" or cat in ["Finance & Investment", "E-commerce", "Sales & Marketing", "Real Estate & Legal", "DeFi"] or any(k in text for k in ["finance", "stock", "accounting", "salesforce", "stripe", "invoice", "crypto trading"]):
+        return "business-finance"
+    if dom == "Documentation" or cat in ["Technical Docs", "Knowledge Base", "Education"] or any(k in text for k in ["markdown", "docs", "readme", "documentation", "wiki", "tutorial"]):
+        return "tech-writer"
+    return "software-engineer"
+
+
 def build_index(max_mcp: int = 12000, max_skills: int = 15000):
-    print("🚀 Extracting curated assets with Domain & Category taxonomy...")
+    print("🚀 Extracting curated assets with Domain, Category & Occupation taxonomy...")
     db = UnifiedAgentDB()
 
     items = []
     seen_ids = set()
     domain_counts = {}
     category_counts = {}
+    occupation_counts = {o["id"]: {"total": 0, "skills": 0, "mcps": 0} for o in OCCUPATION_DEFINITIONS}
 
-    def track_counts(dom, cat):
+    def track_counts(dom, cat, occ, itype):
         domain_counts[dom] = domain_counts.get(dom, 0) + 1
         category_counts[cat] = category_counts.get(cat, 0) + 1
+        if occ in occupation_counts:
+            occupation_counts[occ]["total"] += 1
+            if itype == "mcp_server":
+                occupation_counts[occ]["mcps"] += 1
+            else:
+                occupation_counts[occ]["skills"] += 1
 
     # 1. Extract from Universal Registry (MCP Servers, Tools, Rules)
     if db.registry_db_path and db.registry_db_path.exists():
@@ -82,7 +187,9 @@ def build_index(max_mcp: int = 12000, max_skills: int = 15000):
                 dom = "Development"
                 cat = "Cursor Rules"
 
-            track_counts(dom, cat)
+            occ = classify_occupation(r["name"] or "", r["description"] or "", dom, cat)
+            itype = r["item_type"] or "mcp_server"
+            track_counts(dom, cat, occ, itype)
 
             items.append({
                 "id": sid,
@@ -92,9 +199,10 @@ def build_index(max_mcp: int = 12000, max_skills: int = 15000):
                 "s": int(r["stars"] or 0),
                 "u": int(r["use_count"] or 0),
                 "p": r["source_platform"] or "registry",
-                "t": r["item_type"] or "mcp_server",
+                "t": itype,
                 "dom": dom,
                 "cat": cat,
+                "occ": occ,
                 "g": r["github_url"] or "",
                 "i": r["install_command"] or "",
                 "v": int(r["verified"] or 0),
@@ -129,7 +237,8 @@ def build_index(max_mcp: int = 12000, max_skills: int = 15000):
 
             dom = r["domain"] or "Development"
             cat = r["cat_title"] or "General Skill"
-            track_counts(dom, cat)
+            occ = classify_occupation(r["name"] or "", r["description"] or "", dom, cat)
+            track_counts(dom, cat, occ, "skill")
 
             items.append({
                 "id": sid,
@@ -142,6 +251,7 @@ def build_index(max_mcp: int = 12000, max_skills: int = 15000):
                 "t": "skill",
                 "dom": dom,
                 "cat": cat,
+                "occ": occ,
                 "g": r["github_url"] or "",
                 "i": f"open-agent install {sid}",
                 "v": 0,
@@ -162,6 +272,22 @@ def build_index(max_mcp: int = 12000, max_skills: int = 15000):
         reverse=True,
     )
 
+    # Format occupation statistics
+    occupations_payload = []
+    for o in OCCUPATION_DEFINITIONS:
+        oid = o["id"]
+        cnt = occupation_counts.get(oid, {"total": 0, "skills": 0, "mcps": 0})
+        occupations_payload.append({
+            "id": oid,
+            "title": o["title"],
+            "soc": o["soc"],
+            "icon": o["icon"],
+            "desc": o["desc"],
+            "total_count": cnt["total"],
+            "skills_count": cnt["skills"],
+            "mcps_count": cnt["mcps"],
+        })
+
     # Global Stats
     global_stats = db.get_stats()
     stats_payload = {
@@ -172,6 +298,7 @@ def build_index(max_mcp: int = 12000, max_skills: int = 15000):
         "web_index_count": len(items),
         "domains": sorted_domains,
         "categories": sorted_categories,
+        "occupations": occupations_payload,
         "platforms": global_stats.get("platforms", {}),
     }
 
@@ -180,12 +307,12 @@ def build_index(max_mcp: int = 12000, max_skills: int = 15000):
     with open(INDEX_FILE, "w", encoding="utf-8") as f:
         json.dump(items, f, ensure_ascii=False, separators=(",", ":"))
 
-    print(f"📊 Writing catalog stats with taxonomy to {STATS_FILE}...")
+    print(f"📊 Writing catalog stats with taxonomy & occupations to {STATS_FILE}...")
     with open(STATS_FILE, "w", encoding="utf-8") as f:
         json.dump(stats_payload, f, indent=2, ensure_ascii=False)
 
     size_mb = INDEX_FILE.stat().st_size / (1024 * 1024)
-    print(f"✨ Successfully generated classified web index! ({size_mb:.2f} MB uncompressed)")
+    print(f"✨ Successfully generated classified web index with occupations! ({size_mb:.2f} MB uncompressed)")
 
 
 if __name__ == "__main__":

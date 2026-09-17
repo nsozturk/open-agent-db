@@ -54,6 +54,34 @@ def cmd_stats(args, db: UnifiedAgentDB):
     console.print(table)
 
 
+def cmd_occupations(args, db: UnifiedAgentDB):
+    occupations = db.get_occupations()
+    table = Table(
+        title="💼 AI Agent Skills & MCP Servers Mapped by Career Occupation (SOC Classification)",
+        box=box.ROUNDED,
+        header_style="bold magenta",
+    )
+    table.add_column("Career Occupation", style="bold cyan")
+    table.add_column("SOC Code", style="yellow")
+    table.add_column("Total Assets", justify="right", style="bold green")
+    table.add_column("Skills", justify="right", style="green")
+    table.add_column("MCPs", justify="right", style="cyan")
+    table.add_column("Core Automation Focus", style="white", max_width=42)
+
+    for o in occupations:
+        table.add_row(
+            f"{o['icon']} {o['title']}",
+            o.get("soc", ""),
+            f"{o.get('total_count', 0):,}",
+            f"{o.get('skills_count', 0):,}",
+            f"{o.get('mcps_count', 0):,}",
+            o.get("desc", ""),
+        )
+
+    console.print(table)
+    console.print("[dim]Tip: Filter by occupation: 'open-agent search <query> --occupation devops-sre'[/dim]\n")
+
+
 def cmd_search(args, db: UnifiedAgentDB):
     query = " ".join(args.query) if args.query else ""
     results = db.search(
@@ -63,6 +91,7 @@ def cmd_search(args, db: UnifiedAgentDB):
         min_stars=args.min_stars,
         domain=args.domain,
         category=args.category,
+        occupation=args.occupation,
         limit=args.limit,
     )
 
@@ -77,7 +106,7 @@ def cmd_search(args, db: UnifiedAgentDB):
     )
     table.add_column("ID / Name", style="bold cyan")
     table.add_column("Type", style="bright_blue")
-    table.add_column("Domain / Category", style="magenta")
+    table.add_column("Occupation / Domain", style="magenta")
     table.add_column("Platform", style="blue")
     table.add_column("Author", style="dim")
     table.add_column("Stars", justify="right", style="yellow")
@@ -86,7 +115,8 @@ def cmd_search(args, db: UnifiedAgentDB):
     for r in results:
         type_str = "[green]MCP[/green]" if r.get("item_type") == "mcp_server" else "[cyan]Skill[/cyan]"
         stars_str = f"⭐ {r.get('stars', 0):,}" if r.get("stars") else "-"
-        dom_cat = f"{r.get('domain', 'General')} › {r.get('category', '')}"
+        occ_title = r.get("occupation_title") or r.get("domain", "General")
+        dom_cat = f"{occ_title}\n[dim]{r.get('category', '')}[/dim]"
         table.add_row(
             r.get("name") or r.get("id"),
             type_str,
@@ -115,6 +145,7 @@ def cmd_info(args, db: UnifiedAgentDB):
     details = [
         f"[bold cyan]Name:[/bold cyan] {name}",
         f"[bold cyan]Type:[/bold cyan] {itype} ({platform})",
+        f"[bold cyan]Occupation:[/bold cyan] {item.get('occupation_title', 'General')} ({item.get('soc', 'SOC')})",
         f"[bold cyan]Domain:[/bold cyan] {item.get('domain', 'General')}",
         f"[bold cyan]Category:[/bold cyan] {item.get('category', 'Skill')}",
         f"[bold cyan]Author:[/bold cyan] {item.get('author', 'Unknown')}",
@@ -188,11 +219,15 @@ def cli_entrypoint():
     # stats
     subparsers.add_parser("stats", help="Show database catalog overview & counts")
 
+    # occupations
+    subparsers.add_parser("occupations", help="List occupational career mappings (SOC codes) for Skills & MCPs")
+
     # search
     search_p = subparsers.add_parser("search", help="Search skills and MCP servers")
     search_p.add_argument("query", nargs="*", help="Keywords to search for")
     search_p.add_argument("--type", choices=["skill", "mcp_server", "cursor_rule", "all"], default=None, help="Filter by item type")
     search_p.add_argument("--platform", type=str, default=None, help="Filter by platform (smithery, glama, skillsmp, etc.)")
+    search_p.add_argument("--occupation", type=str, default=None, help="Filter by occupation (e.g. 'devops-sre', 'ai-data-scientist')")
     search_p.add_argument("--domain", type=str, default=None, help="Filter by domain (e.g. 'Data & AI', 'DevOps', 'Databases')")
     search_p.add_argument("--category", type=str, default=None, help="Filter by category (e.g. 'Machine Learning', 'CI/CD')")
     search_p.add_argument("--min-stars", type=int, default=0, help="Minimum star rating")
@@ -218,6 +253,8 @@ def cli_entrypoint():
 
     if args.command == "stats":
         cmd_stats(args, db)
+    elif args.command == "occupations":
+        cmd_occupations(args, db)
     elif args.command == "search":
         cmd_search(args, db)
     elif args.command == "info":

@@ -134,6 +134,51 @@ Open-Agent-DB structures the entire ecosystem across **12 Core Domains** and **7
 
 ---
 
+## 💼 Career Occupations (SOC Classification) — Skills & MCPs Unified
+
+Beyond domain categorization, Open-Agent-DB aligns all Agent Skills and Model Context Protocol (MCP) servers with the **U.S. Bureau of Labor Statistics Standard Occupational Classification (SOC)**.
+
+This allows developers and organizations to discover complete AI tool stacks curated for real-world engineering careers:
+
+| Icon | Career Occupation | SOC Code | Skills | MCPs | Total | Core Automation Focus |
+| :---: | :--- | :---: | :---: | :---: | :---: | :--- |
+| 💻 | **Software & Web Engineers** | `SOC 15-1252` | 4,398 | 1,539 | **5,937** | Full-stack, backend, frontend, architecture, and coding workflows |
+| 🚀 | **DevOps & SRE Engineers** | `SOC 15-1250` | 2,370 | 391 | **2,761** | CI/CD pipelines, Kubernetes, Docker, Terraform, and cloud infrastructure |
+| 🧠 | **AI Specialists & Data Scientists** | `SOC 15-2051` | 8,591 | 2,342 | **10,933** | LLMs, embeddings, RAG pipelines, model training, and data analysis |
+| 🗄️ | **Database Administrators & Engineers** | `SOC 15-1242` | 490 | 240 | **730** | SQL query optimization, connection pools, migrations, vector stores |
+| 🛡️ | **Security Analysts & QA Engineers** | `SOC 15-1212` | 2,262 | 197 | **2,459** | Vulnerability auditing, code review, fuzzing, testing, compliance |
+| 📈 | **Product & Project Managers** | `SOC 11-1021` | 378 | 59 | **437** | Agile roadmaps, task coordination, Linear, Jira, team communication |
+| 🎨 | **UI/UX Designers & Media Creators** | `SOC 27-1024` | 859 | 19 | **878** | Design systems, SVG icons, Figma assets, and creative media generation |
+| 🔬 | **Researchers & Academic Scientists** | `SOC 19-1029` | 492 | 19 | **511** | Literature search, arXiv, PubMed, bioinformatics, LaTeX |
+| 📊 | **Business & Financial Analysts** | `SOC 13-2051` | 1,164 | 74 | **1,238** | Market intelligence, valuation models, financial metrics, spreadsheets |
+| 📚 | **Technical Writers & Educators** | `SOC 27-3042` | 935 | 111 | **1,046** | API documentation, markdown linting, developer guides, and wikis |
+
+### Filtering by Occupation in CLI
+
+```bash
+# List all career tracks and asset counts
+open-agent occupations
+# Or via Node/npx:
+npx open-agent-db occupations
+
+# Search for assets under DevOps & SRE
+open-agent search --occupation devops-sre
+npx open-agent-db search --occupation devops-sre
+
+# Combine query keywords with career tracks
+open-agent search "docker" --occupation devops-sre
+open-agent search "vector" --occupation ai-data-scientist
+```
+
+### Filtering by Occupation on Web
+
+In the Web Explorer (`http://localhost:8080` or GitHub Pages):
+1. Click **`[ 💼 Browse by Occupation (SOC) ]`** at the top of the browse panel.
+2. Select any career pill (e.g. `🚀 DevOps & SRE Engineers (SOC 15-1250)`).
+3. Result cards highlight career tags and let you jump directly to all tools for that role!
+
+---
+
 ## 🖥️ Web Explorer
 
 Open-Agent-DB comes with a modern, dark-themed responsive single-page application.
