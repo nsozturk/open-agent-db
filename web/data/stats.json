@@ -1,0 +1,20 @@
+{
+  "total_ecosystem_assets": 788158,
+  "total_skills_indexed": 637876,
+  "total_skills_synced": 326753,
+  "total_mcp_servers": 113566,
+  "web_index_count": 27000,
+  "platforms": {
+    "agensi:skill": 5810,
+    "awesome_mcp:mcp_server": 3893,
+    "cursorrules:cursor_rule": 257,
+    "glama:mcp_server": 86821,
+    "mcp_directory:mcp_server": 1803,
+    "mcp_directory:skill": 9293,
+    "official_mcp:mcp_server": 15661,
+    "skills_sh:skill": 16356,
+    "skillsdirectory:mcp_server": 213,
+    "smithery:mcp_server": 5175,
+    "smithery:skill": 5000
+  }
+}

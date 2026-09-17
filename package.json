@@ -1,0 +1,40 @@
+{
+  "name": "open-agent-db",
+  "version": "0.1.0",
+  "description": "The universal open catalog and package manager for AI Agent Skills & Model Context Protocol (MCP) Servers",
+  "bin": {
+    "open-agent": "./bin/open-agent.js",
+    "open-agent-db": "./bin/open-agent.js",
+    "agent-db": "./bin/open-agent.js"
+  },
+  "main": "./bin/open-agent.js",
+  "keywords": [
+    "mcp",
+    "mcp-server",
+    "model-context-protocol",
+    "claude",
+    "claude-code",
+    "codex",
+    "cursor",
+    "agent-skills",
+    "ai-agents",
+    "skills"
+  ],
+  "author": "Open-Agent-DB Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/open-agent-db/open-agent-db.git"
+  },
+  "bugs": {
+    "url": "https://github.com/open-agent-db/open-agent-db/issues"
+  },
+  "homepage": "https://github.com/open-agent-db/open-agent-db#readme",
+  "files": [
+    "bin",
+    "web/data",
+    "README.md",
+    "LICENSE"
+  ],
+  "preferGlobal": true
+}

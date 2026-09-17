@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Open-Agent-DB — The Universal AI Agent & MCP Registry</title>
+  <meta name="description" content="Discover 800,000+ AI Agent Skills and Model Context Protocol (MCP) servers for Claude Code, OpenAI Codex, Cursor, and autonomous agents.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0fdf4',
+              500: '#10b981',
+              600: '#059669',
+            },
+            dark: {
+              900: '#0b0f17',
+              800: '#111827',
+              700: '#1f2937',
+              600: '#374151',
+            }
+          },
+          fontFamily: {
+            mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col antialiased selection:bg-emerald-500 selection:text-white">
+
+  <!-- Header -->
+  <header class="border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <span class="text-2xl">🤖</span>
+        <div>
+          <a href="#" class="font-bold text-lg tracking-tight bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent">Open-Agent-DB</a>
+          <span class="hidden sm:inline-block ml-2 text-xs px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono">v0.1.0</span>
+        </div>
+      </div>
+
+      <!-- Live Counters Header Badges -->
+      <div class="hidden md:flex items-center gap-2 text-xs font-mono text-slate-400">
+        <span class="px-2.5 py-1 rounded-md bg-slate-900 border border-slate-800">
+          <strong class="text-emerald-400" id="stat-total-skills">637K+</strong> Skills
+        </span>
+        <span class="px-2.5 py-1 rounded-md bg-slate-900 border border-slate-800">
+          <strong class="text-cyan-400" id="stat-total-mcp">113K+</strong> MCPs
+        </span>
+        <span class="px-2.5 py-1 rounded-md bg-slate-900 border border-slate-800">
+          <strong class="text-purple-400" id="stat-total-synced">326K+</strong> Code Blobs
+        </span>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex items-center gap-3">
+        <button id="cli-help-btn" class="text-xs px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700/80 flex items-center gap-1.5 transition">
+          <span class="font-mono text-emerald-400">CLI</span> Guide
+        </button>
+        <a href="https://github.com" target="_blank" rel="noopener" class="text-xs px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-medium flex items-center gap-1.5 shadow-lg shadow-emerald-900/30 transition">
+          <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+          GitHub
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="text-center max-w-3xl mx-auto mb-8">
+      <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-white mb-3">
+        The Open Database for <br>
+        <span class="bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent">AI Agent Skills & MCP Servers</span>
+      </h1>
+      <p class="text-sm sm:text-base text-slate-400">
+        Search and 1-click install from a universal catalog of <span class="text-slate-200 font-semibold">800,000+ assets</span> for Claude Code, Codex, Cursor, and autonomous agents.
+      </p>
+    </div>
+
+    <!-- Search Box -->
+    <div class="max-w-3xl mx-auto mb-6">
+      <div class="relative group">
+        <div class="absolute -inset-0.5 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-2xl blur opacity-30 group-hover:opacity-60 transition duration-300"></div>
+        <div class="relative flex items-center bg-slate-900 rounded-xl border border-slate-800 shadow-2xl overflow-hidden">
+          <div class="pl-4 text-slate-400">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          </div>
+          <input 
+            type="text" 
+            id="search-input" 
+            placeholder="Search skills, MCP tools, author, topic (e.g. postgres, react, git, docker)..." 
+            autocomplete="off"
+            class="w-full py-4 pl-3 pr-24 bg-transparent text-white placeholder-slate-500 text-base focus:outline-none"
+          >
+          <div class="absolute right-3 flex items-center gap-1.5">
+            <kbd class="hidden sm:inline-block px-2 py-1 text-xs font-mono font-semibold text-slate-400 bg-slate-800 border border-slate-700 rounded shadow">⌘K</kbd>
+            <button id="clear-btn" class="hidden text-slate-500 hover:text-slate-300 p-1 text-sm font-bold">&times;</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Type Tabs -->
+    <div class="flex flex-wrap items-center justify-center gap-2 mb-6" id="type-tabs">
+      <button data-type="all" class="type-tab active px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition bg-emerald-500 text-white shadow-lg shadow-emerald-500/20">
+        All Assets (<span id="count-all">0</span>)
+      </button>
+      <button data-type="mcp_server" class="type-tab px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800">
+        🔌 MCP Servers (<span id="count-mcp">0</span>)
+      </button>
+      <button data-type="skill" class="type-tab px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800">
+        ⚡ Agent Skills (<span id="count-skill">0</span>)
+      </button>
+      <button data-type="cursor_rule" class="type-tab px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800">
+        🎯 Cursor Rules (<span id="count-cursor">0</span>)
+      </button>
+    </div>
+
+    <!-- Filters and Controls Bar -->
+    <div class="bg-slate-900/60 border border-slate-800/80 rounded-xl p-3 mb-6 flex flex-wrap items-center justify-between gap-3 text-xs">
+      <div class="flex flex-wrap items-center gap-3">
+        <!-- Platform Filter -->
+        <div class="flex items-center gap-1.5">
+          <span class="text-slate-400">Source:</span>
+          <select id="platform-select" class="bg-slate-950 border border-slate-700 rounded-md px-2.5 py-1 text-slate-200 focus:outline-none focus:border-emerald-500">
+            <option value="all">All Platforms</option>
+            <option value="official_mcp">Official Anthropic MCP</option>
+            <option value="smithery">Smithery</option>
+            <option value="glama">Glama</option>
+            <option value="skillsmp">SkillsMP (Claude/Codex)</option>
+            <option value="mcp_directory">MCP Directory</option>
+            <option value="skills_sh">Skills.sh</option>
+          </select>
+        </div>
+
+        <!-- Minimum Stars Filter -->
+        <div class="flex items-center gap-1.5">
+          <span class="text-slate-400">Min Stars:</span>
+          <select id="stars-select" class="bg-slate-950 border border-slate-700 rounded-md px-2 py-1 text-slate-200 focus:outline-none focus:border-emerald-500">
+            <option value="0">Any Rating</option>
+            <option value="5">⭐ 5+</option>
+            <option value="25">⭐ 25+</option>
+            <option value="100">⭐ 100+</option>
+            <option value="500">⭐ 500+</option>
+          </select>
+        </div>
+
+        <!-- Verified Checkbox -->
+        <label class="flex items-center gap-1.5 cursor-pointer text-slate-300 select-none">
+          <input type="checkbox" id="verified-checkbox" class="rounded bg-slate-950 border-slate-700 text-emerald-500 focus:ring-emerald-500 focus:ring-offset-slate-900">
+          <span>🛡️ Verified Only</span>
+        </label>
+      </div>
+
+      <!-- Results Count and Sort -->
+      <div class="flex items-center gap-3 ml-auto">
+        <span class="text-slate-400 font-mono" id="results-count">Showing 0 results</span>
+        <select id="sort-select" class="bg-slate-950 border border-slate-700 rounded-md px-2.5 py-1 text-slate-200 focus:outline-none focus:border-emerald-500">
+          <option value="stars">Most Stars ⭐</option>
+          <option value="used">Most Installs 🚀</option>
+          <option value="name">Name (A-Z)</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Cards Grid -->
+    <div id="results-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <!-- Injected via JavaScript -->
+    </div>
+
+    <!-- Empty State -->
+    <div id="empty-state" class="hidden text-center py-16">
+      <span class="text-4xl mb-3 block">🔍</span>
+      <h3 class="text-lg font-semibold text-slate-300 mb-1">No matching assets found</h3>
+      <p class="text-sm text-slate-500 max-w-sm mx-auto">Try broadening your search keywords or resetting your star and platform filters.</p>
+    </div>
+
+    <!-- Pagination Controls -->
+    <div class="mt-8 flex items-center justify-center gap-3" id="pagination-wrapper">
+      <button id="prev-page-btn" class="px-4 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed border border-slate-800 text-xs font-medium">← Previous</button>
+      <span id="page-indicator" class="text-xs font-mono text-slate-400">Page 1 of 1</span>
+      <button id="next-page-btn" class="px-4 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed border border-slate-800 text-xs font-medium">Next →</button>
+    </div>
+  </main>
+
+  <!-- Modal / Detail Drawer -->
+  <div id="detail-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 relative shadow-2xl">
+      <button id="modal-close" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl font-bold p-1">&times;</button>
+      
+      <div class="flex items-start gap-4 mb-4">
+        <div class="p-3 rounded-xl bg-slate-800 text-2xl" id="modal-icon">📦</div>
+        <div>
+          <h2 class="text-xl font-bold text-white flex items-center gap-2" id="modal-title">Item Title</h2>
+          <div class="flex flex-wrap items-center gap-2 mt-1" id="modal-badges"></div>
+        </div>
+      </div>
+
+      <div class="mb-5">
+        <h4 class="text-xs font-mono uppercase tracking-wider text-slate-400 mb-1.5">Description</h4>
+        <p class="text-sm text-slate-300 leading-relaxed" id="modal-description"></p>
+      </div>
+
+      <!-- Quick Install Box -->
+      <div class="mb-5 bg-slate-950 border border-slate-800 rounded-xl p-3">
+        <div class="flex items-center justify-between mb-1.5">
+          <span class="text-xs font-mono text-emerald-400 font-semibold" id="modal-install-label">1-Click Install Command</span>
+          <button id="modal-copy-btn" class="text-xs px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/30 transition">Copy</button>
+        </div>
+        <pre class="text-xs font-mono text-slate-200 overflow-x-auto whitespace-pre-wrap" id="modal-install-code"></pre>
+      </div>
+
+      <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-800">
+        <a id="modal-github-link" href="#" target="_blank" rel="noopener" class="text-xs px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-medium flex items-center gap-1.5 transition">
+          View on GitHub ↗
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLI Guide Modal -->
+  <div id="cli-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-xl w-full p-6 relative shadow-2xl">
+      <button id="cli-modal-close" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl font-bold p-1">&times;</button>
+      <h3 class="text-lg font-bold text-white mb-2">⚡ Open-Agent-DB CLI Guide</h3>
+      <p class="text-xs text-slate-400 mb-4">Install and run the high-speed local terminal package manager:</p>
+      <div class="space-y-3 text-xs font-mono">
+        <div class="bg-slate-950 p-3 rounded-lg border border-slate-800">
+          <div class="text-slate-500 mb-1"># 1. Clone & install CLI</div>
+          <div class="text-emerald-400">git clone https://github.com/open-agent-db/open-agent-db.git</div>
+          <div class="text-emerald-400">pip install -e ./open-agent-db</div>
+        </div>
+        <div class="bg-slate-950 p-3 rounded-lg border border-slate-800">
+          <div class="text-slate-500 mb-1"># 2. Search over 800,000+ assets</div>
+          <div class="text-cyan-400">open-agent search "postgres" --type mcp_server</div>
+          <div class="text-cyan-400">open-agent search "react" --min-stars 50</div>
+        </div>
+        <div class="bg-slate-950 p-3 rounded-lg border border-slate-800">
+          <div class="text-slate-500 mb-1"># 3. 1-Click Install into Claude Code or Codex</div>
+          <div class="text-emerald-400">open-agent install &lt;skill_id&gt; --target claude</div>
+        </div>
+        <div class="bg-slate-950 p-3 rounded-lg border border-slate-800">
+          <div class="text-slate-500 mb-1"># 4. Launch Local Web Explorer (5.6 GB SQLite)</div>
+          <div class="text-purple-400">open-agent serve --port 8080</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-800/80 bg-slate-950 py-6 text-center text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div>Open-Agent-DB — Released under <span class="text-slate-300 font-semibold">MIT License</span>.</div>
+      <div class="flex items-center gap-4">
+        <a href="https://github.com" class="hover:text-slate-300 transition">GitHub Repository</a>
+        <a href="#" class="hover:text-slate-300 transition">Hugging Face Datasets</a>
+        <a href="#" class="hover:text-slate-300 transition">Documentation</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
