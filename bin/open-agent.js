@@ -68,27 +68,43 @@ function cmdStats() {
 }
 
 function cmdSearch(args) {
-  const query = args.filter(a => !a.startsWith('--')).join(' ').trim().toLowerCase();
-  
   let typeFilter = null;
+  let domainFilter = null;
+  let categoryFilter = null;
   let minStars = 0;
   let limit = 20;
+  const queryWords = [];
 
   for (let i = 0; i < args.length; i++) {
-    if (args[i] === '--type' && args[i + 1]) typeFilter = args[++i];
-    if (args[i] === '--min-stars' && args[i + 1]) minStars = parseInt(args[++i], 10) || 0;
-    if (args[i] === '--limit' && args[i + 1]) limit = parseInt(args[++i], 10) || 20;
+    const arg = args[i];
+    if (arg === '--type' && args[i + 1]) {
+      typeFilter = args[++i];
+    } else if (arg === '--domain' && args[i + 1]) {
+      domainFilter = args[++i].toLowerCase();
+    } else if (arg === '--category' && args[i + 1]) {
+      categoryFilter = args[++i].toLowerCase();
+    } else if (arg === '--min-stars' && args[i + 1]) {
+      minStars = parseInt(args[++i], 10) || 0;
+    } else if (arg === '--limit' && args[i + 1]) {
+      limit = parseInt(args[++i], 10) || 20;
+    } else if (!arg.startsWith('--')) {
+      queryWords.push(arg);
+    }
   }
+
+  const query = queryWords.join(' ').trim().toLowerCase();
 
   const items = loadCatalogIndex();
   const tokens = query ? query.split(/\s+/).filter(Boolean) : [];
 
   const matched = items.filter(item => {
     if (typeFilter && item.t !== typeFilter) return false;
+    if (domainFilter && domainFilter !== 'all' && (item.dom || '').toLowerCase() !== domainFilter) return false;
+    if (categoryFilter && categoryFilter !== 'all' && (item.cat || '').toLowerCase() !== categoryFilter) return false;
     if (minStars > 0 && (item.s || 0) < minStars) return false;
 
     if (tokens.length > 0) {
-      const target = `${item.n} ${item.d || ''} ${item.a || ''}`.toLowerCase();
+      const target = `${item.n} ${item.d || ''} ${item.a || ''} ${item.dom || ''} ${item.cat || ''}`.toLowerCase();
       for (let t of tokens) {
         if (!target.includes(t)) return false;
       }
@@ -112,8 +128,9 @@ function cmdSearch(args) {
     const typeStr = isMcp ? `${c.green}[MCP]${c.reset}` : `${c.cyan}[Skill]${c.reset}`;
     const starsStr = r.s > 0 ? `${c.yellow}⭐ ${r.s.toLocaleString()}${c.reset}` : `${c.dim}-${c.reset}`;
     const desc = (r.d || 'No description').replace(/\n/g, ' ').substring(0, 55);
+    const domCat = `${r.dom || 'General'} › ${r.cat || 'Skill'}`;
 
-    console.log(`  ${typeStr} ${c.bold}${c.white}${r.n}${c.reset} ${c.dim}by ${r.a}${c.reset} (${r.p})`);
+    console.log(`  ${typeStr} ${c.bold}${c.white}${r.n}${c.reset} ${c.magenta}[${domCat}]${c.reset} ${c.dim}by ${r.a}${c.reset} (${r.p})`);
     console.log(`     ${starsStr} | ${c.dim}${desc}...${c.reset}`);
     const installCmd = r.i || (isMcp ? `npx -y ${r.n}` : `open-agent install ${r.id}`);
     console.log(`     ${c.dim}Install:${c.reset} ${c.cyan}${installCmd}${c.reset}\n`);
@@ -140,6 +157,8 @@ function cmdInfo(id) {
   console.log(`\n${c.cyan}╭───────────────────────────── 📦 ${item.n} ─────────────────────────────╮${c.reset}`);
   console.log(`  ${c.bold}Name:${c.reset}           ${item.n}`);
   console.log(`  ${c.bold}Type:${c.reset}           ${isMcp ? 'MCP Server' : 'Agent Skill'} (${item.p})`);
+  console.log(`  ${c.bold}Domain:${c.reset}         ${item.dom || 'General'}`);
+  console.log(`  ${c.bold}Category:${c.reset}       ${item.cat || 'Skill'}`);
   console.log(`  ${c.bold}Author:${c.reset}         ${item.a}`);
   console.log(`  ${c.bold}Stars:${c.reset}          ⭐ ${(item.s || 0).toLocaleString()}`);
   if (item.g) console.log(`  ${c.bold}GitHub:${c.reset}         ${item.g}`);

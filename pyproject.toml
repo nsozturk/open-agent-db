@@ -17,3 +17,10 @@ dependencies = [
 [project.scripts]
 open-agent = "cli.main:cli_entrypoint"
 agent-db = "cli.main:cli_entrypoint"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["cli*", "web*"]
+
+[tool.setuptools.package-data]
+"*" = ["*.json", "*.html", "*.css", "*.js"]

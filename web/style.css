@@ -24,6 +24,41 @@
   border-color: transparent !important;
 }
 
+/* Domain & Category Pills */
+.domain-pill {
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+}
+
+.domain-pill:hover {
+  background-color: #1e293b;
+  color: #f8fafc;
+  border-color: #475569;
+}
+
+.domain-pill.active {
+  background: linear-gradient(135deg, #059669 0%, #0d9488 100%) !important;
+  color: #ffffff !important;
+  border-color: #10b981 !important;
+  box-shadow: 0 4px 14px -2px rgba(16, 185, 129, 0.4);
+}
+
+.category-pill {
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.category-pill:hover {
+  background-color: #1e293b;
+  color: #e2e8f0;
+}
+
+.category-pill.active {
+  background-color: #3b82f6 !important;
+  color: #ffffff !important;
+  border-color: #60a5fa !important;
+}
+
 /* Asset Card Hover Effects */
 .asset-card {
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -52,4 +87,25 @@
   background-color: rgba(168, 85, 247, 0.1);
   color: #c084fc;
   border: 1px solid rgba(168, 85, 247, 0.25);
+}
+
+.badge-domain {
+  background-color: rgba(59, 130, 246, 0.1);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.25);
+}
+
+.badge-category {
+  background-color: rgba(139, 92, 246, 0.1);
+  color: #c084fc;
+  border: 1px solid rgba(139, 92, 246, 0.25);
+}
+
+/* Hide scrollbar for clean horizontal scrolling */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

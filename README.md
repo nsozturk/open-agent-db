@@ -83,7 +83,7 @@ open-agent search "react"
 
 *(Or clone the repository and run `pip install -e .`)*
 
-### 2. Basic Usage
+### 2. Basic Usage & Taxonomy Search
 
 ```bash
 # Check database catalog metrics
@@ -92,8 +92,14 @@ open-agent stats
 # Search for PostgreSQL capabilities (skills or MCP servers)
 open-agent search "postgres"
 
-# Filter by MCP servers only
-open-agent search "github" --type mcp_server --min-stars 50
+# Filter by Domain (Alan)
+open-agent search "docker" --domain "DevOps"
+
+# Filter by Subcategory (Kategori)
+open-agent search "neural" --domain "Data & AI" --category "Machine Learning"
+
+# Filter by Type, Domain, and minimum stars
+open-agent search "database" --type mcp_server --domain "Databases" --min-stars 50
 
 # Inspect asset details and files manifest
 open-agent info "Prisma Postgres"
@@ -104,6 +110,27 @@ open-agent install "caching-strategy-selector" --target claude
 # Generate Claude Desktop MCP JSON config
 open-agent install "Prisma Postgres"
 ```
+
+---
+
+## 🧭 Taxonomy & Ecosystem Domains
+
+Open-Agent-DB structures the entire ecosystem across **12 Core Domains** and **70+ Specialized Subcategories** (compatible with SkillsMP taxonomy):
+
+| Icon | Domain (Alan) | Key Subcategories | Typical Assets |
+| :---: | :--- | :--- | :--- |
+| 🧠 | **Data & AI** | Machine Learning, LLM Prompts, Data Analysis, Data Engineering | Prompt templates, RAG pipelines, model fine-tuning |
+| 🛠️ | **Tools** | Debugging, Web & Automation, Utilities, System Admin | Browser automation, scrapers, shell assistants |
+| 💻 | **Development** | Frontend, Backend, Developer Tools, Architecture, Mobile | React, TypeScript, Rust, API generators, Cursor rules |
+| 🛡️ | **Testing & Security** | Security, Code Quality, Penetration Testing, Audits | Vulnerability scanners, SAST rules, test harnesses |
+| 📈 | **Business** | Sales & Marketing, Finance, Project Management, CRM | Notion/Linear sync, financial models, SEO agents |
+| 🚀 | **DevOps** | DevOps & Cloud, Git Workflows, CI/CD, Containers | Docker, Kubernetes, AWS/GCP, GitHub Actions tools |
+| 📚 | **Documentation** | Technical Docs, Knowledge Base, API Specs, Education | Doc generators, markdown helpers, wikis |
+| 🎨 | **Content & Media** | Documents, Design, Image/Audio Media, Copywriting | Figma integrations, SVG tools, media transcoders |
+| 🔬 | **Research** | Academic, Scientific Computing, Bioinformatics, Chemistry | PubMed searchers, LaTeX formatters, lab workflows |
+| 🗄️ | **Databases** | SQL Databases, Database Tools, Vector DBs, NoSQL | PostgreSQL Ops, Prisma, Redis, MongoDB servers |
+| 🌱 | **Lifestyle** | Philosophy, Health & Wellness, Writing, Arts | Personal knowledge management, habits |
+| ⛓️ | **Blockchain** | Smart Contracts, Web3 Tools, DeFi Protocols | Solidity auditors, Ethereum/Solana RPC tools |
 
 ---
 

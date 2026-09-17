@@ -46,15 +46,25 @@ class OpenAgentHandler(http.server.SimpleHTTPRequestHandler):
             self.send_json(200, db.get_stats())
             return
 
-        # API: /api/search?q=postgres&limit=30
+        # API: /api/search?q=postgres&domain=Databases&category=SQL%20Databases&limit=30
         if path == "/api/search":
             q = params.get("q", [""])[0]
             atype = params.get("type", [None])[0]
             plat = params.get("platform", [None])[0]
+            dom = params.get("domain", [None])[0]
+            cat = params.get("category", [None])[0]
             stars = int(params.get("min_stars", ["0"])[0] or 0)
             limit = int(params.get("limit", ["40"])[0] or 40)
 
-            results = db.search(query=q, asset_type=atype, platform=plat, min_stars=stars, limit=limit)
+            results = db.search(
+                query=q,
+                asset_type=atype,
+                platform=plat,
+                domain=dom,
+                category=cat,
+                min_stars=stars,
+                limit=limit,
+            )
             self.send_json(200, {"query": q, "count": len(results), "results": results})
             return
 

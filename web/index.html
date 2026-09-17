@@ -114,7 +114,7 @@
     </div>
 
     <!-- Type Tabs -->
-    <div class="flex flex-wrap items-center justify-center gap-2 mb-6" id="type-tabs">
+    <div class="flex flex-wrap items-center justify-center gap-2 mb-5" id="type-tabs">
       <button data-type="all" class="type-tab active px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition bg-emerald-500 text-white shadow-lg shadow-emerald-500/20">
         All Assets (<span id="count-all">0</span>)
       </button>
@@ -127,6 +127,30 @@
       <button data-type="cursor_rule" class="type-tab px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800">
         🎯 Cursor Rules (<span id="count-cursor">0</span>)
       </button>
+    </div>
+
+    <!-- Domain & Category Taxonomy Navigation (like SkillsMP) -->
+    <div class="mb-6 bg-slate-900/70 border border-slate-800/80 rounded-2xl p-4 shadow-xl">
+      <!-- Domain Navigation Header -->
+      <div class="flex items-center justify-between mb-3">
+        <div class="flex items-center gap-2">
+          <span class="text-sm">🧭</span>
+          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300">Browse by Domain (Alanlar)</h3>
+        </div>
+        <button id="reset-domain-btn" class="hidden text-xs text-emerald-400 hover:text-emerald-300 font-medium">
+          Reset Filter ↺
+        </button>
+      </div>
+
+      <!-- Domain Pills Container (Scrollable) -->
+      <div class="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar" id="domain-pills">
+        <!-- Injected via JavaScript -->
+      </div>
+
+      <!-- Subcategory Pills Container (Dynamic based on selected domain) -->
+      <div class="mt-3 pt-3 border-t border-slate-800/80 flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar" id="category-pills">
+        <!-- Injected via JavaScript -->
+      </div>
     </div>
 
     <!-- Filters and Controls Bar -->
@@ -143,6 +167,22 @@
             <option value="skillsmp">SkillsMP (Claude/Codex)</option>
             <option value="mcp_directory">MCP Directory</option>
             <option value="skills_sh">Skills.sh</option>
+          </select>
+        </div>
+
+        <!-- Domain Select (Dropdown Fallback) -->
+        <div class="flex items-center gap-1.5">
+          <span class="text-slate-400">Domain:</span>
+          <select id="domain-select" class="bg-slate-950 border border-slate-700 rounded-md px-2.5 py-1 text-slate-200 focus:outline-none focus:border-emerald-500 max-w-[130px] truncate">
+            <option value="all">All Domains</option>
+          </select>
+        </div>
+
+        <!-- Category Select (Dropdown Fallback) -->
+        <div class="flex items-center gap-1.5">
+          <span class="text-slate-400">Category:</span>
+          <select id="category-select" class="bg-slate-950 border border-slate-700 rounded-md px-2.5 py-1 text-slate-200 focus:outline-none focus:border-emerald-500 max-w-[140px] truncate">
+            <option value="all">All Categories</option>
           </select>
         </div>
 
@@ -204,6 +244,9 @@
       <div class="flex items-start gap-4 mb-4">
         <div class="p-3 rounded-xl bg-slate-800 text-2xl" id="modal-icon">📦</div>
         <div>
+          <div class="text-xs font-mono text-emerald-400 mb-1 flex items-center gap-1.5" id="modal-breadcrumb">
+            <!-- Domain > Category -->
+          </div>
           <h2 class="text-xl font-bold text-white flex items-center gap-2" id="modal-title">Item Title</h2>
           <div class="flex flex-wrap items-center gap-2 mt-1" id="modal-badges"></div>
         </div>

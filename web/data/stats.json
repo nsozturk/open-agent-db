@@ -1,9 +1,345 @@
 {
   "total_ecosystem_assets": 788158,
   "total_skills_indexed": 637876,
-  "total_skills_synced": 326753,
+  "total_skills_synced": 327234,
   "total_mcp_servers": 113566,
-  "web_index_count": 27000,
+  "web_index_count": 26930,
+  "domains": [
+    {
+      "domain": "Data & AI",
+      "count": 8695
+    },
+    {
+      "domain": "Tools",
+      "count": 6316
+    },
+    {
+      "domain": "Development",
+      "count": 2562
+    },
+    {
+      "domain": "Testing & Security",
+      "count": 2092
+    },
+    {
+      "domain": "Business",
+      "count": 2041
+    },
+    {
+      "domain": "DevOps",
+      "count": 1966
+    },
+    {
+      "domain": "Documentation",
+      "count": 1028
+    },
+    {
+      "domain": "Content & Media",
+      "count": 981
+    },
+    {
+      "domain": "Research",
+      "count": 540
+    },
+    {
+      "domain": "Databases",
+      "count": 538
+    },
+    {
+      "domain": "Lifestyle",
+      "count": 94
+    },
+    {
+      "domain": "Blockchain",
+      "count": 77
+    }
+  ],
+  "categories": [
+    {
+      "category": "LLM & AI",
+      "count": 8062
+    },
+    {
+      "category": "Debugging",
+      "count": 2406
+    },
+    {
+      "category": "Web & Automation",
+      "count": 1173
+    },
+    {
+      "category": "Utilities",
+      "count": 1139
+    },
+    {
+      "category": "Sales & Marketing",
+      "count": 1116
+    },
+    {
+      "category": "DevOps & Cloud",
+      "count": 913
+    },
+    {
+      "category": "Security",
+      "count": 856
+    },
+    {
+      "category": "System Administration",
+      "count": 647
+    },
+    {
+      "category": "Code Quality",
+      "count": 637
+    },
+    {
+      "category": "Git Workflows",
+      "count": 612
+    },
+    {
+      "category": "Testing",
+      "count": 599
+    },
+    {
+      "category": "Documents",
+      "count": 557
+    },
+    {
+      "category": "Productivity & Integration",
+      "count": 434
+    },
+    {
+      "category": "Technical Docs",
+      "count": 415
+    },
+    {
+      "category": "Frontend",
+      "count": 390
+    },
+    {
+      "category": "Finance & Investment",
+      "count": 384
+    },
+    {
+      "category": "Databases",
+      "count": 373
+    },
+    {
+      "category": "Developer Tools",
+      "count": 371
+    },
+    {
+      "category": "Knowledge Base",
+      "count": 347
+    },
+    {
+      "category": "Project Management",
+      "count": 328
+    },
+    {
+      "category": "Architecture Patterns",
+      "count": 328
+    },
+    {
+      "category": "Machine Learning",
+      "count": 323
+    },
+    {
+      "category": "Backend",
+      "count": 309
+    },
+    {
+      "category": "Education",
+      "count": 266
+    },
+    {
+      "category": "Cursor Rules",
+      "count": 257
+    },
+    {
+      "category": "Data Engineering",
+      "count": 225
+    },
+    {
+      "category": "Academic",
+      "count": 193
+    },
+    {
+      "category": "CI/CD",
+      "count": 178
+    },
+    {
+      "category": "Mobile",
+      "count": 177
+    },
+    {
+      "category": "IDE Plugins",
+      "count": 171
+    },
+    {
+      "category": "Automation Tools",
+      "count": 161
+    },
+    {
+      "category": "Package & Distribution",
+      "count": 159
+    },
+    {
+      "category": "Game Development",
+      "count": 153
+    },
+    {
+      "category": "Content Creation",
+      "count": 152
+    },
+    {
+      "category": "Framework Internals",
+      "count": 150
+    },
+    {
+      "category": "Design",
+      "count": 140
+    },
+    {
+      "category": "Media",
+      "count": 132
+    },
+    {
+      "category": "CLI Tools",
+      "count": 130
+    },
+    {
+      "category": "Cloud",
+      "count": 122
+    },
+    {
+      "category": "Lab Tools",
+      "count": 106
+    },
+    {
+      "category": "Computational Chemistry",
+      "count": 96
+    },
+    {
+      "category": "CMS & Platforms",
+      "count": 90
+    },
+    {
+      "category": "Database Tools",
+      "count": 87
+    },
+    {
+      "category": "Data Analysis",
+      "count": 85
+    },
+    {
+      "category": "Real Estate & Legal",
+      "count": 80
+    },
+    {
+      "category": "Bioinformatics",
+      "count": 80
+    },
+    {
+      "category": "Scripting",
+      "count": 78
+    },
+    {
+      "category": "Full Stack",
+      "count": 78
+    },
+    {
+      "category": "Containers",
+      "count": 76
+    },
+    {
+      "category": "SQL Databases",
+      "count": 74
+    },
+    {
+      "category": "Monitoring",
+      "count": 65
+    },
+    {
+      "category": "Domain & DNS Tools",
+      "count": 55
+    },
+    {
+      "category": "Smart Contracts",
+      "count": 40
+    },
+    {
+      "category": "Productivity & Collab",
+      "count": 39
+    },
+    {
+      "category": "Arts & Crafts",
+      "count": 37
+    },
+    {
+      "category": "Scientific Computing",
+      "count": 37
+    },
+    {
+      "category": "E-commerce",
+      "count": 33
+    },
+    {
+      "category": "Payment",
+      "count": 33
+    },
+    {
+      "category": "Web3 Tools",
+      "count": 28
+    },
+    {
+      "category": "Astronomy & Physics",
+      "count": 28
+    },
+    {
+      "category": "Literature & Writing",
+      "count": 18
+    },
+    {
+      "category": "E-commerce Development",
+      "count": 17
+    },
+    {
+      "category": "Philosophy & Ethics",
+      "count": 17
+    },
+    {
+      "category": "Health & Fitness",
+      "count": 15
+    },
+    {
+      "category": "Business Apps",
+      "count": 13
+    },
+    {
+      "category": "Divination & Mysticism",
+      "count": 10
+    },
+    {
+      "category": "Wellness & Health",
+      "count": 9
+    },
+    {
+      "category": "DeFi",
+      "count": 9
+    },
+    {
+      "category": "General Skill",
+      "count": 5
+    },
+    {
+      "category": "NoSQL Databases",
+      "count": 4
+    },
+    {
+      "category": "Culinary Arts",
+      "count": 3
+    }
+  ],
   "platforms": {
     "agensi:skill": 5810,
     "awesome_mcp:mcp_server": 3893,

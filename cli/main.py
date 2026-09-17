@@ -61,6 +61,8 @@ def cmd_search(args, db: UnifiedAgentDB):
         asset_type=args.type,
         platform=args.platform,
         min_stars=args.min_stars,
+        domain=args.domain,
+        category=args.category,
         limit=args.limit,
     )
 
@@ -75,17 +77,20 @@ def cmd_search(args, db: UnifiedAgentDB):
     )
     table.add_column("ID / Name", style="bold cyan")
     table.add_column("Type", style="bright_blue")
+    table.add_column("Domain / Category", style="magenta")
     table.add_column("Platform", style="blue")
     table.add_column("Author", style="dim")
     table.add_column("Stars", justify="right", style="yellow")
-    table.add_column("Description", style="white", max_width=45, overflow="ellipsis")
+    table.add_column("Description", style="white", max_width=40, overflow="ellipsis")
 
     for r in results:
         type_str = "[green]MCP[/green]" if r.get("item_type") == "mcp_server" else "[cyan]Skill[/cyan]"
         stars_str = f"⭐ {r.get('stars', 0):,}" if r.get("stars") else "-"
+        dom_cat = f"{r.get('domain', 'General')} › {r.get('category', '')}"
         table.add_row(
             r.get("name") or r.get("id"),
             type_str,
+            dom_cat,
             r.get("source_platform", "registry"),
             (r.get("author") or "unknown")[:16],
             stars_str,
@@ -110,6 +115,8 @@ def cmd_info(args, db: UnifiedAgentDB):
     details = [
         f"[bold cyan]Name:[/bold cyan] {name}",
         f"[bold cyan]Type:[/bold cyan] {itype} ({platform})",
+        f"[bold cyan]Domain:[/bold cyan] {item.get('domain', 'General')}",
+        f"[bold cyan]Category:[/bold cyan] {item.get('category', 'Skill')}",
         f"[bold cyan]Author:[/bold cyan] {item.get('author', 'Unknown')}",
         f"[bold cyan]Stars:[/bold cyan] ⭐ {stars:,}",
         f"[bold cyan]GitHub:[/bold cyan] {item.get('github_url') or 'N/A'}",
@@ -186,6 +193,8 @@ def cli_entrypoint():
     search_p.add_argument("query", nargs="*", help="Keywords to search for")
     search_p.add_argument("--type", choices=["skill", "mcp_server", "cursor_rule", "all"], default=None, help="Filter by item type")
     search_p.add_argument("--platform", type=str, default=None, help="Filter by platform (smithery, glama, skillsmp, etc.)")
+    search_p.add_argument("--domain", type=str, default=None, help="Filter by domain (e.g. 'Data & AI', 'DevOps', 'Databases')")
+    search_p.add_argument("--category", type=str, default=None, help="Filter by category (e.g. 'Machine Learning', 'CI/CD')")
     search_p.add_argument("--min-stars", type=int, default=0, help="Minimum star rating")
     search_p.add_argument("--limit", type=int, default=25, help="Number of results to display")
 

@@ -12,10 +12,33 @@
   const PAGE_SIZE = 24;
   let isLocalApi = false;
 
+  const DOMAIN_ICONS = {
+    "Data & AI": "🧠",
+    "Tools": "🛠️",
+    "Development": "💻",
+    "Testing & Security": "🛡️",
+    "Business": "📈",
+    "DevOps": "🚀",
+    "Documentation": "📚",
+    "Content & Media": "🎨",
+    "Research": "🔬",
+    "Databases": "🗄️",
+    "Lifestyle": "🌱",
+    "Blockchain": "⛓️"
+  };
+
+  // State
+  let currentTypeFilter = "all";
+  let currentDomainFilter = "all";
+  let currentCategoryFilter = "all";
+  let domainTaxonomy = {}; // domain -> { count: N, categories: { cat: count } }
+
   // DOM Elements
   const searchInput = document.getElementById("search-input");
   const clearBtn = document.getElementById("clear-btn");
   const platformSelect = document.getElementById("platform-select");
+  const domainSelect = document.getElementById("domain-select");
+  const categorySelect = document.getElementById("category-select");
   const starsSelect = document.getElementById("stars-select");
   const verifiedCheckbox = document.getElementById("verified-checkbox");
   const sortSelect = document.getElementById("sort-select");
@@ -26,10 +49,14 @@
   const nextPageBtn = document.getElementById("next-page-btn");
   const pageIndicator = document.getElementById("page-indicator");
   const typeTabs = document.querySelectorAll(".type-tab");
+  const domainPillsContainer = document.getElementById("domain-pills");
+  const categoryPillsContainer = document.getElementById("category-pills");
+  const resetDomainBtn = document.getElementById("reset-domain-btn");
 
   // Modal Elements
   const detailModal = document.getElementById("detail-modal");
   const modalClose = document.getElementById("modal-close");
+  const modalBreadcrumb = document.getElementById("modal-breadcrumb");
   const modalTitle = document.getElementById("modal-title");
   const modalIcon = document.getElementById("modal-icon");
   const modalBadges = document.getElementById("modal-badges");
@@ -44,9 +71,6 @@
   const cliModal = document.getElementById("cli-modal");
   const cliModalClose = document.getElementById("cli-modal-close");
 
-  let currentTypeFilter = "all";
-
-  // Check if running on local backend or static GitHub Pages
   async function init() {
     try {
       const apiCheck = await fetch("/api/status", { method: "HEAD" }).catch(() => null);
@@ -78,7 +102,11 @@
       const resp = await fetch("data/catalog_index.json");
       if (!resp.ok) throw new Error("Network response not ok");
       allItems = await resp.json();
+
+      buildTaxonomyIndex();
       updateTabCounts();
+      renderDomainPills();
+      renderCategoryPills();
       applyFilters();
     } catch (err) {
       console.error("Failed to load catalog index:", err);
@@ -121,6 +149,173 @@
     document.getElementById("count-cursor").textContent = cursorCount.toLocaleString();
   }
 
+  // Build Taxonomy from all items
+  function buildTaxonomyIndex() {
+    domainTaxonomy = {};
+
+    for (const item of allItems) {
+      const dom = item.dom || "Other";
+      const cat = item.cat || "General";
+
+      if (!domainTaxonomy[dom]) {
+        domainTaxonomy[dom] = { count: 0, categories: {} };
+      }
+      domainTaxonomy[dom].count++;
+      domainTaxonomy[dom].categories[cat] = (domainTaxonomy[dom].categories[cat] || 0) + 1;
+    }
+
+    // Populate Domain Dropdown
+    domainSelect.innerHTML = `<option value="all">All Domains (${allItems.length.toLocaleString()})</option>`;
+    const sortedDomains = Object.keys(domainTaxonomy).sort((a, b) => domainTaxonomy[b].count - domainTaxonomy[a].count);
+    for (const dom of sortedDomains) {
+      const icon = DOMAIN_ICONS[dom] || "📁";
+      const opt = document.createElement("option");
+      opt.value = dom;
+      opt.textContent = `${icon} ${dom} (${domainTaxonomy[dom].count.toLocaleString()})`;
+      domainSelect.appendChild(opt);
+    }
+  }
+
+  // Render Horizontal Domain Pills
+  function renderDomainPills() {
+    let html = `
+      <button 
+        data-domain="all" 
+        class="domain-pill ${currentDomainFilter === 'all' ? 'active' : ''} px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-900 border border-slate-800 text-slate-300 flex items-center gap-1.5 shrink-0"
+      >
+        <span>🌐</span>
+        <span>All Domains</span>
+        <span class="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800/80 text-slate-400 font-mono">${allItems.length.toLocaleString()}</span>
+      </button>
+    `;
+
+    const sortedDomains = Object.keys(domainTaxonomy).sort((a, b) => domainTaxonomy[b].count - domainTaxonomy[a].count);
+
+    for (const dom of sortedDomains) {
+      const icon = DOMAIN_ICONS[dom] || "📁";
+      const count = domainTaxonomy[dom].count;
+      const countLabel = count >= 1000 ? (count / 1000).toFixed(1) + "K" : count;
+      const isActive = currentDomainFilter === dom;
+
+      html += `
+        <button 
+          data-domain="${escapeAttr(dom)}" 
+          class="domain-pill ${isActive ? 'active' : ''} px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-900 border border-slate-800 text-slate-300 flex items-center gap-1.5 shrink-0"
+        >
+          <span>${icon}</span>
+          <span>${escapeHtml(dom)}</span>
+          <span class="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800/80 text-slate-400 font-mono">${countLabel}</span>
+        </button>
+      `;
+    }
+
+    domainPillsContainer.innerHTML = html;
+
+    // Attach click listeners to domain pills
+    domainPillsContainer.querySelectorAll(".domain-pill").forEach(pill => {
+      pill.addEventListener("click", () => {
+        const dom = pill.dataset.domain;
+        selectDomain(dom);
+      });
+    });
+  }
+
+  // Select Domain action
+  function selectDomain(domain) {
+    currentDomainFilter = domain;
+    currentCategoryFilter = "all";
+
+    domainSelect.value = domain;
+    resetDomainBtn.classList.toggle("hidden", domain === "all");
+
+    // Update active state in domain pills
+    domainPillsContainer.querySelectorAll(".domain-pill").forEach(p => {
+      p.classList.toggle("active", p.dataset.domain === domain);
+    });
+
+    renderCategoryPills();
+    applyFilters();
+  }
+
+  // Render Horizontal Category Pills
+  function renderCategoryPills() {
+    let categoriesList = [];
+
+    if (currentDomainFilter === "all") {
+      // Aggregate top categories across all domains
+      const allCats = {};
+      for (const dom in domainTaxonomy) {
+        for (const cat in domainTaxonomy[dom].categories) {
+          allCats[cat] = (allCats[cat] || 0) + domainTaxonomy[dom].categories[cat];
+        }
+      }
+      categoriesList = Object.entries(allCats)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 15);
+    } else {
+      // Subcategories of selected domain
+      const domCats = domainTaxonomy[currentDomainFilter]?.categories || {};
+      categoriesList = Object.entries(domCats).sort((a, b) => b[1] - a[1]);
+    }
+
+    let html = `
+      <button 
+        data-cat="all" 
+        class="category-pill ${currentCategoryFilter === 'all' ? 'active' : ''} px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-950 border border-slate-800 text-slate-400 shrink-0"
+      >
+        ${currentDomainFilter === 'all' ? 'Top Categories' : `All in ${escapeHtml(currentDomainFilter)}`}
+      </button>
+    `;
+
+    for (const [catName, count] of categoriesList) {
+      const isActive = currentCategoryFilter === catName;
+      const countLabel = count >= 1000 ? (count / 1000).toFixed(1) + "K" : count;
+
+      html += `
+        <button 
+          data-cat="${escapeAttr(catName)}" 
+          class="category-pill ${isActive ? 'active' : ''} px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-950 border border-slate-800 text-slate-400 hover:text-slate-200 shrink-0"
+        >
+          <span>${escapeHtml(catName)}</span>
+          <span class="text-[10px] text-slate-500 font-mono ml-1">(${countLabel})</span>
+        </button>
+      `;
+    }
+
+    categoryPillsContainer.innerHTML = html;
+
+    // Populate Category Dropdown
+    categorySelect.innerHTML = `<option value="all">${currentDomainFilter === 'all' ? 'All Categories' : `All in ${currentDomainFilter}`}</option>`;
+    for (const [catName, count] of categoriesList) {
+      const opt = document.createElement("option");
+      opt.value = catName;
+      opt.textContent = `${catName} (${count})`;
+      if (catName === currentCategoryFilter) opt.selected = true;
+      categorySelect.appendChild(opt);
+    }
+
+    // Attach click listeners to category pills
+    categoryPillsContainer.querySelectorAll(".category-pill").forEach(pill => {
+      pill.addEventListener("click", () => {
+        const cat = pill.dataset.cat;
+        selectCategory(cat);
+      });
+    });
+  }
+
+  // Select Category action
+  function selectCategory(category) {
+    currentCategoryFilter = category;
+    categorySelect.value = category;
+
+    // Update active pill
+    categoryPillsContainer.querySelectorAll(".category-pill").forEach(p => {
+      p.classList.toggle("active", p.dataset.cat === category);
+    });
+
+    applyFilters();
+  }
+
   // Filter & Search Engine
   function applyFilters() {
     const query = (searchInput.value || "").trim().toLowerCase();
@@ -139,6 +334,16 @@
         return false;
       }
 
+      // Domain Filter
+      if (currentDomainFilter !== "all" && item.dom !== currentDomainFilter) {
+        return false;
+      }
+
+      // Category Filter
+      if (currentCategoryFilter !== "all" && item.cat !== currentCategoryFilter) {
+        return false;
+      }
+
       // Platform Filter
       if (platform !== "all" && item.p !== platform) {
         return false;
@@ -154,9 +359,15 @@
         return false;
       }
 
-      // Query Tokens Filter (Must match all tokens)
+      // Query Tokens Filter (Searches name, desc, author, domain, and category)
       if (tokens.length > 0) {
-        const target = (item.n + " " + (item.d || "") + " " + (item.a || "")).toLowerCase();
+        const target = (
+          item.n + " " + 
+          (item.d || "") + " " + 
+          (item.a || "") + " " + 
+          (item.dom || "") + " " + 
+          (item.cat || "")
+        ).toLowerCase();
         for (let t of tokens) {
           if (!target.includes(t)) return false;
         }
@@ -209,37 +420,62 @@
       const icon = isMcp ? "🔌" : isCursor ? "🎯" : "⚡";
       const badgeClass = isMcp ? "badge-mcp" : isCursor ? "badge-cursor" : "badge-skill";
       const typeLabel = isMcp ? "MCP Server" : isCursor ? "Cursor Rule" : "Agent Skill";
+      const domIcon = DOMAIN_ICONS[item.dom] || "📁";
       const installCmd = item.i || (isMcp ? `npx -y ${item.n}` : `open-agent install ${item.id}`);
 
       html += `
         <div class="asset-card bg-slate-900/90 border border-slate-800 rounded-xl p-4 flex flex-col justify-between" data-id="${item.id}">
           <div>
+            <!-- Top Badges Row -->
             <div class="flex items-start justify-between gap-2 mb-2">
-              <div class="flex items-center gap-2">
-                <span class="text-xl">${icon}</span>
-                <span class="text-xs px-2 py-0.5 rounded-full font-medium ${badgeClass}">${typeLabel}</span>
+              <div class="flex flex-wrap items-center gap-1.5">
+                <span class="text-lg">${icon}</span>
+                <span class="text-[11px] px-2 py-0.5 rounded-full font-medium ${badgeClass}">${typeLabel}</span>
                 ${item.v ? '<span class="text-xs text-amber-400" title="Verified Publisher">🛡️</span>' : ''}
               </div>
-              <div class="flex items-center gap-1.5 text-xs text-amber-400 font-mono font-medium">
+              <div class="flex items-center gap-1 text-xs text-amber-400 font-mono font-medium shrink-0">
                 ${item.s > 0 ? `<span>⭐ ${item.s.toLocaleString()}</span>` : '<span class="text-slate-600">-</span>'}
               </div>
             </div>
 
+            <!-- Title -->
             <h3 class="font-bold text-base text-white hover:text-emerald-400 transition cursor-pointer line-clamp-1 mb-1" onclick="window.openDetails('${item.id}')">
               ${escapeHtml(item.n)}
             </h3>
 
-            <div class="text-xs text-slate-400 mb-2 flex items-center gap-2">
+            <!-- Author & Platform -->
+            <div class="text-xs text-slate-400 mb-2 flex items-center gap-1.5">
               <span>by <strong class="text-slate-300 font-normal">${escapeHtml(item.a)}</strong></span>
               <span class="text-slate-600">•</span>
               <span class="capitalize text-slate-500 font-mono">${item.p.replace('_', ' ')}</span>
             </div>
 
+            <!-- Domain & Category Badges (Interactive Filter Discovery) -->
+            <div class="flex flex-wrap items-center gap-1.5 mb-2.5">
+              <button 
+                onclick="window.quickFilterDomain('${escapeAttr(item.dom)}')" 
+                class="badge-domain text-[10px] px-2 py-0.5 rounded-md font-medium hover:brightness-125 transition flex items-center gap-1"
+                title="Filter by domain: ${escapeAttr(item.dom)}"
+              >
+                <span>${domIcon}</span>
+                <span>${escapeHtml(item.dom)}</span>
+              </button>
+              <button 
+                onclick="window.quickFilterCategory('${escapeAttr(item.dom)}', '${escapeAttr(item.cat)}')" 
+                class="badge-category text-[10px] px-2 py-0.5 rounded-md font-medium hover:brightness-125 transition"
+                title="Filter by category: ${escapeAttr(item.cat)}"
+              >
+                ${escapeHtml(item.cat)}
+              </button>
+            </div>
+
+            <!-- Description -->
             <p class="text-xs text-slate-400 line-clamp-2 leading-relaxed mb-4">
               ${escapeHtml(item.d || "No description provided.")}
             </p>
           </div>
 
+          <!-- Bottom Install Box -->
           <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between gap-2">
             <button 
               onclick="window.copyCommand('${escapeAttr(installCmd)}', this)"
@@ -252,7 +488,7 @@
 
             <button 
               onclick="window.openDetails('${item.id}')"
-              class="text-xs px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 transition font-medium"
+              class="text-xs px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 transition font-medium shrink-0"
             >
               Info
             </button>
@@ -264,6 +500,24 @@
     resultsGrid.innerHTML = html;
   }
 
+  // Quick Filter helpers for card clicks
+  window.quickFilterDomain = function (domain) {
+    selectDomain(domain);
+    window.scrollTo({ top: 150, behavior: "smooth" });
+  };
+
+  window.quickFilterCategory = function (domain, category) {
+    currentDomainFilter = domain;
+    domainSelect.value = domain;
+    resetDomainBtn.classList.remove("hidden");
+    domainPillsContainer.querySelectorAll(".domain-pill").forEach(p => {
+      p.classList.toggle("active", p.dataset.domain === domain);
+    });
+    renderCategoryPills();
+    selectCategory(category);
+    window.scrollTo({ top: 150, behavior: "smooth" });
+  };
+
   // Modal Detail View
   window.openDetails = function (id) {
     const item = allItems.find(x => x.id === id);
@@ -274,6 +528,7 @@
     const icon = isMcp ? "🔌" : isCursor ? "🎯" : "⚡";
     const badgeClass = isMcp ? "badge-mcp" : isCursor ? "badge-cursor" : "badge-skill";
     const typeLabel = isMcp ? "MCP Server" : isCursor ? "Cursor Rule" : "Agent Skill";
+    const domIcon = DOMAIN_ICONS[item.dom] || "📁";
     const installCmd = item.i || (isMcp ? `npx -y ${item.n}` : `open-agent install ${item.id}`);
 
     modalIcon.textContent = icon;
@@ -282,8 +537,17 @@
     modalInstallCode.textContent = isMcp ? generateMcpJson(item) : installCmd;
     modalInstallLabel.textContent = isMcp ? "Claude Desktop / Cursor MCP JSON Config" : "1-Click CLI Install Command";
 
+    // Taxonomy breadcrumb
+    modalBreadcrumb.innerHTML = `
+      <span>${domIcon} ${escapeHtml(item.dom || 'General')}</span>
+      <span class="text-slate-600 font-bold">&rsaquo;</span>
+      <span class="text-slate-300 font-semibold">${escapeHtml(item.cat || 'Skill')}</span>
+    `;
+
     modalBadges.innerHTML = `
       <span class="text-xs px-2 py-0.5 rounded-full font-medium ${badgeClass}">${typeLabel}</span>
+      <span class="text-xs px-2 py-0.5 rounded-full badge-domain font-medium">${domIcon} ${escapeHtml(item.dom)}</span>
+      <span class="text-xs px-2 py-0.5 rounded-full badge-category font-medium">${escapeHtml(item.cat)}</span>
       <span class="text-xs px-2 py-0.5 rounded-full bg-slate-800 text-slate-300">by ${escapeHtml(item.a)}</span>
       <span class="text-xs px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 font-mono">${item.p}</span>
       ${item.s > 0 ? `<span class="text-xs px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 font-mono">⭐ ${item.s.toLocaleString()}</span>` : ''}
@@ -362,6 +626,19 @@
   starsSelect.addEventListener("change", applyFilters);
   verifiedCheckbox.addEventListener("change", applyFilters);
   sortSelect.addEventListener("change", applyFilters);
+
+  // Dropdown Listeners
+  domainSelect.addEventListener("change", (e) => {
+    selectDomain(e.target.value);
+  });
+
+  categorySelect.addEventListener("change", (e) => {
+    selectCategory(e.target.value);
+  });
+
+  resetDomainBtn.addEventListener("click", () => {
+    selectDomain("all");
+  });
 
   // Type Tabs
   typeTabs.forEach(tab => {
