@@ -119,28 +119,34 @@ python3 vector_search.py --build --limit 50000
 
 ## 🤗 Hugging Face Integration
 
-Open-Agent-DB provides seamless synchronization with Hugging Face Datasets for both tabular metadata and pre-computed vector embeddings:
+Open-Agent-DB provides a unified Hub on Hugging Face Datasets ([`ns0bj/open-agent-db`](https://huggingface.co/datasets/ns0bj/open-agent-db)) hosting two core databases:
 
-### 1. Vector DB & Parquet Dataset on Hugging Face
-```bash
-# Generate dense vector embeddings and upload to Hugging Face
-python3 export_to_huggingface.py --vectors --repo-id "ns0bj/open-agent-db"
-
-# Export standard metadata JSONL and upload to Hugging Face
-python3 export_to_huggingface.py --repo-id "ns0bj/open-agent-db"
-```
-
-### 2. Loading and Querying in Python (2 Lines):
+### 1. 🧠 Semantic Vector DB (`open_agent_db_vectors.parquet`)
+Pre-computed dense 128-dimensional float32 vector embeddings over Agent Skills, MCP Servers, and Directives. Ready for instant semantic similarity search via FAISS, cosine distance, or LanceDB.
 
 ```python
 from datasets import load_dataset
 
 # Load vector embeddings directly from Hugging Face
-dataset = load_dataset("ns0bj/open-agent-db", split="train")
+dataset = load_dataset("ns0bj/open-agent-db", data_files="open_agent_db_vectors.parquet", split="train")
 
-# Native FAISS or cosine similarity over the 'embedding' column
+# Add native FAISS index for sub-millisecond similarity search
 dataset.add_faiss_index(column="embedding")
-results = dataset.get_nearest_examples("embedding", query_vector, k=5)
+scores, samples = dataset.get_nearest_examples("embedding", query_vector, k=5)
+```
+
+### 2. 🗄️ Full Universal SQL Database (`open_agent_db_sql.sqlite.zst`)
+The complete 30+ GB offline SQLite database with full-text search (FTS5), schema indices, and raw BLOB files for 3.48M+ assets, compressed down to ~12 GB with Zstandard:
+
+```bash
+# Download compressed database via huggingface-cli
+hf download ns0bj/open-agent-db open_agent_db_sql.sqlite.zst --repo-type dataset --local-dir ./data
+
+# Decompress to pristine 31 GB SQLite database (takes ~10 seconds)
+unzstd ./data/open_agent_db_sql.sqlite.zst -o ./data/open_agent_db.sqlite
+
+# Query immediately with SQLite or DuckDB
+sqlite3 ./data/open_agent_db.sqlite "SELECT count(*) FROM assets;"
 ```
 
 ---

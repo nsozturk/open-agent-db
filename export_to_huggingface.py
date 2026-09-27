@@ -116,8 +116,13 @@ def main():
     parser.add_argument("--limit", type=int, default=None, help="Limit number of rows to export for JSONL")
     parser.add_argument("--export-only", action="store_true", help="Only export, do not upload")
     parser.add_argument("--upload-only", action="store_true", help="Skip export, upload existing output file directly")
+    parser.add_argument("--upload-file", help="Directly upload a specific file (e.g. SQLite database or archive) to dataset repo")
     parser.add_argument("--private", action="store_true", help="Create dataset as private")
     args = parser.parse_args()
+
+    if args.upload_file:
+        upload_dataset(args.repo_id, args.upload_file, private=args.private)
+        return
 
     target_file = args.vector_out if args.vectors else args.out
 

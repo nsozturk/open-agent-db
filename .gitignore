@@ -48,6 +48,7 @@ downloads/
 *.zip
 *.har
 *.parquet
+*.zst
 *.log
 logs/
 
