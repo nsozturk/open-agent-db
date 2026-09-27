@@ -20,16 +20,16 @@
     "ai-agents",
     "skills"
   ],
-  "author": "Open-Agent-DB Team",
+  "author": "Enes Öztürk (@nsozturk)",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/open-agent-db/open-agent-db.git"
+    "url": "https://github.com/nsozturk/open-agent-db.git"
   },
   "bugs": {
-    "url": "https://github.com/open-agent-db/open-agent-db/issues"
+    "url": "https://github.com/nsozturk/open-agent-db/issues"
   },
-  "homepage": "https://github.com/open-agent-db/open-agent-db#readme",
+  "homepage": "https://github.com/nsozturk/open-agent-db#readme",
   "files": [
     "bin",
     "web/data",

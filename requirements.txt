@@ -1,1 +1,7 @@
-rich>=13.0.0
+# Open-Agent-DB Dependencies
+rich>=13.7.0
+aiohttp>=3.9.0
+huggingface_hub>=0.20.0
+pyyaml>=6.0
+tqdm>=4.66.0
+requests>=2.31.0

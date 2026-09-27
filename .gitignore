@@ -34,14 +34,22 @@ yarn-error.log*
 .pnpm-debug.log*
 package-lock.json
 
-# SQLite & Data files (stored via GitHub Releases or external LFS)
+# SQLite & Data files (stored via Hugging Face or Releases)
 *.db
 *.db-wal
 *.db-shm
+*.db-journal
 *.sqlite
 *.sqlite3
-data/*.db
-data/*.sqlite
+data
+data/
+downloads/
+*.tar.gz
+*.zip
+*.har
+*.parquet
+*.log
+logs/
 
 # macOS metadata
 .DS_Store
