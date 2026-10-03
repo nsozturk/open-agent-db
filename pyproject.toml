@@ -13,6 +13,38 @@ requires-python = ">=3.8"
 dependencies = [
     "rich>=13.0.0",
 ]
+keywords = [
+    "ai-agents",
+    "mcp",
+    "mcp-server",
+    "model-context-protocol",
+    "claude-code",
+    "cursor-rules",
+    "vector-search",
+    "sqlite",
+    "semantic-search",
+    "faiss",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+[project.urls]
+Homepage = "https://nsozturk.github.io/open-agent-db/"
+Repository = "https://github.com/nsozturk/open-agent-db"
+Documentation = "https://nsozturk.github.io/open-agent-db/"
+"Hugging Face" = "https://huggingface.co/datasets/ns0bj/open-agent-db"
+Issues = "https://github.com/nsozturk/open-agent-db/issues"
 
 [project.scripts]
 open-agent = "cli.main:cli_entrypoint"

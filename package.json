@@ -12,13 +12,20 @@
     "mcp",
     "mcp-server",
     "model-context-protocol",
-    "claude",
-    "claude-code",
-    "codex",
-    "cursor",
-    "agent-skills",
     "ai-agents",
-    "skills"
+    "agent-skills",
+    "claude-code",
+    "claude-skills",
+    "cursor-rules",
+    "codex",
+    "gemini",
+    "copilot",
+    "vector-database",
+    "semantic-search",
+    "sqlite-fts5",
+    "faiss",
+    "huggingface-dataset",
+    "developer-tools"
   ],
   "author": "Enes Öztürk (@nsozturk)",
   "license": "MIT",
@@ -29,7 +36,7 @@
   "bugs": {
     "url": "https://github.com/nsozturk/open-agent-db/issues"
   },
-  "homepage": "https://github.com/nsozturk/open-agent-db#readme",
+  "homepage": "https://nsozturk.github.io/open-agent-db/",
   "files": [
     "bin",
     "web/data",

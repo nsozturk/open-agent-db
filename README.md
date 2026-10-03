@@ -1,23 +1,38 @@
+<p align="center">
+  <img src="assets/banner.png" alt="Open-Agent-DB — The Universal AI Agent & MCP Hub" width="100%">
+</p>
+
 <div align="center">
 
-# 🤖 Open-Agent-DB
-
 <p>
-  <img src="https://img.shields.io/badge/version-2.0.0-blue?style=flat-square" alt="Version" />
-  <img src="https://img.shields.io/badge/python-3.10%2B-blue?style=flat-square&logo=python&logoColor=white" alt="Python" />
+  <a href="https://www.npmjs.com/package/open-agent-db"><img src="https://img.shields.io/npm/v/open-agent-db?style=flat-square&color=cb3837&logo=npm" alt="NPM Version" /></a>
+  <img src="https://img.shields.io/badge/python-3.8%2B-blue?style=flat-square&logo=python&logoColor=white" alt="Python" />
   <img src="https://img.shields.io/badge/node-%3E%3D18.0-339933?style=flat-square&logo=nodedotjs&logoColor=white" alt="Node" />
   <img src="https://img.shields.io/badge/total%20assets-3.48M%2B-purple?style=flat-square" alt="Total Assets" />
-  <img src="https://img.shields.io/badge/ecosystems-7%20Supported-orange?style=flat-square" alt="Ecosystems" />
+  <img src="https://img.shields.io/badge/mcp%20servers-113K%2B-orange?style=flat-square" alt="MCP Servers" />
   <img src="https://img.shields.io/badge/vector%20db-Parquet%20Dense%20Embeddings-success?style=flat-square" alt="Vector DB" />
   <img src="https://img.shields.io/badge/database-SQLite%20FTS5-blue?style=flat-square&logo=sqlite&logoColor=white" alt="Database" />
-  <img src="https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Datasets%20%26%20Vectors-yellow?style=flat-square" alt="Hugging Face" />
-  <img src="https://img.shields.io/npm/v/open-agent-db?style=flat-square&color=cb3837&logo=npm" alt="NPM Version" />
+  <a href="https://huggingface.co/datasets/ns0bj/open-agent-db"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Datasets%20%26%20Vectors-yellow?style=flat-square" alt="Hugging Face" /></a>
+  <a href="AGENTS.md"><img src="https://img.shields.io/badge/AI%20Agent-Native%20Ready-blueviolet?style=flat-square" alt="AI Agent Ready" /></a>
+  <a href="https://nsozturk.github.io/open-agent-db/"><img src="https://img.shields.io/badge/docs-GitHub%20Pages-00bcd4?style=flat-square" alt="Docs" /></a>
   <img src="https://img.shields.io/badge/license-MIT-green?style=flat-square" alt="License" />
+</p>
+
+<p align="center">
+  <code>ai-agents</code> •
+  <code>model-context-protocol</code> •
+  <code>mcp-servers</code> •
+  <code>claude-skills</code> •
+  <code>cursor-rules</code> •
+  <code>vector-database</code> •
+  <code>semantic-search</code> •
+  <code>sqlite-fts5</code> •
+  <code>faiss</code>
 </p>
 
 **The Universal Open Database and Semantic Vector Search Engine for AI Agent Skills, MCP Servers, Project Directives, and Rules.**
 
-[Features](#-features) • [Ecosystems](#-supported-ecosystems) • [Quick Start](#-quick-start) • [Vector Search](#-semantic-vector-search) • [Hugging Face](#-hugging-face-integration) • [Web Explorer](#-web-explorer) • [License](#-license)
+[Documentation](https://nsozturk.github.io/open-agent-db/) • [Features](#-features) • [Ecosystems](#-supported-ecosystems) • [Quick Start](#-quick-start) • [Vector Search](#-semantic-vector-search) • [Hugging Face](#-hugging-face-integration) • [License](#-license)
 
 </div>
 

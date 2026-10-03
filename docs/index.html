@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Open-Agent-DB — The Universal AI Agent & MCP Registry</title>
+  
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="Official documentation for Open-Agent-DB: The universal open database and semantic vector search engine for 3.48M+ AI Agent Skills, 113K+ MCP Servers, and Directives.">
+  <meta name="keywords" content="open-agent-db, ai-agents, model-context-protocol, mcp, mcp-servers, claude-code, cursor-rules, codex, gemini, vector-search, semantic-search, faiss, sqlite">
+  <meta name="author" content="Enes Öztürk (@nsozturk)">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://nsozturk.github.io/open-agent-db/">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://nsozturk.github.io/open-agent-db/">
+  <meta property="og:title" content="Open-Agent-DB — Universal AI Agent & MCP Hub">
+  <meta property="og:description" content="Search 3.48M+ AI Agent skills, project rules, and 113K+ MCP servers instantly via CLI, semantic vectors, and offline SQLite.">
+  <meta property="og:image" content="https://raw.githubusercontent.com/nsozturk/open-agent-db/main/assets/banner.png">
+  <meta property="og:site_name" content="Open-Agent-DB Documentation">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://nsozturk.github.io/open-agent-db/">
+  <meta name="twitter:title" content="Open-Agent-DB — Universal AI Agent & MCP Hub">
+  <meta name="twitter:description" content="The universal open database and semantic vector search engine for AI Agent Skills, MCP Servers, and Project Rules.">
+  <meta name="twitter:image" content="https://raw.githubusercontent.com/nsozturk/open-agent-db/main/assets/banner.png">
+  <meta name="twitter:creator" content="@nsozturk">
+
+  <!-- Schema.org JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "open-agent-db",
+    "operatingSystem": "Universal (macOS, Linux, Windows)",
+    "applicationCategory": "DeveloperApplication",
+    "description": "Universal database and semantic vector search engine for AI Agent Skills, MCP Servers, Project Directives, and Rules.",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "author": {
+      "@type": "Person",
+      "name": "Enes Öztürk",
+      "url": "https://github.com/nsozturk"
+    }
+  }
+  </script>
+
+  <!-- Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #080b12;
+      --card-bg: #0f1523;
+      --card-hover: #151d30;
+      --sidebar-bg: #0b0f1a;
+      --border: #1e283d;
+      --border-accent: #334155;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent: #8b5cf6;
+      --accent-light: #a78bfa;
+      --accent-glow: rgba(139, 92, 246, 0.18);
+      --cyan: #38bdf8;
+      --emerald: #10b981;
+      --code-bg: #030712;
+      --sidebar-width: 290px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* Navbar */
+    header.navbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      height: 64px;
+      background: rgba(8, 11, 18, 0.85);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      font-size: 1.25rem;
+      color: #fff;
+      text-decoration: none;
+    }
+    .brand span.badge {
+      background: var(--accent-glow);
+      color: var(--accent-light);
+      border: 1px solid var(--accent);
+      font-size: 0.75rem;
+      padding: 2px 10px;
+      border-radius: 9999px;
+      font-weight: 700;
+    }
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+    .nav-btn-secondary {
+      background: #1e293b;
+      color: #cbd5e1;
+      border: 1px solid var(--border-accent);
+    }
+    .nav-btn-secondary:hover {
+      background: #334155;
+      color: #fff;
+    }
+    .nav-btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+    .nav-btn-primary:hover {
+      background: #7c3aed;
+    }
+
+    /* Layout */
+    .container {
+      display: flex;
+      max-width: 1440px;
+      margin: 0 auto;
+    }
+
+    /* Sidebar */
+    aside.sidebar {
+      width: var(--sidebar-width);
+      position: sticky;
+      top: 64px;
+      height: calc(100vh - 64px);
+      background: var(--sidebar-bg);
+      border-right: 1px solid var(--border);
+      padding: 20px 16px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .search-box input {
+      width: 100%;
+      background: #030712;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 8px 12px;
+      color: var(--text);
+      font-size: 0.85rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .search-box input:focus {
+      border-color: var(--accent);
+    }
+    .nav-group-title {
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin: 12px 8px 6px;
+    }
+    .nav-list {
+      list-style: none;
+    }
+    .nav-item a {
+      display: block;
+      padding: 7px 12px;
+      color: #94a3b8;
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      border-radius: 6px;
+      transition: all 0.15s ease;
+    }
+    .nav-item a:hover {
+      background: rgba(255, 255, 255, 0.04);
+      color: #fff;
+    }
+    .nav-item a.active {
+      background: var(--accent-glow);
+      color: var(--accent-light);
+      font-weight: 600;
+    }
+
+    /* Main Content */
+    main.content {
+      flex: 1;
+      padding: 32px 48px 80px;
+      max-width: calc(1440px - var(--sidebar-width));
+    }
+
+    /* Banner Hero */
+    .banner-hero {
+      margin-bottom: 32px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: #030712;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+    .banner-hero img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* Tags Row */
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 28px;
+    }
+    .tag-chip {
+      background: #111827;
+      color: #94a3b8;
+      border: 1px solid var(--border);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Headings */
+    h1, h2, h3, h4 {
+      color: #fff;
+      font-weight: 800;
+      line-height: 1.3;
+    }
+    h1 { font-size: 2.25rem; margin-bottom: 12px; }
+    h2 { font-size: 1.5rem; margin-top: 48px; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+    h3 { font-size: 1.15rem; margin-top: 24px; margin-bottom: 10px; color: var(--accent-light); }
+    p { margin-bottom: 16px; color: #cbd5e1; }
+
+    /* Cards Grid */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin: 20px 0;
+    }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+      transition: all 0.2s ease;
+    }
+    .card:hover {
+      border-color: var(--accent);
+      background: var(--card-hover);
+      transform: translateY(-2px);
+    }
+    .card-icon {
+      font-size: 1.5rem;
+      margin-bottom: 8px;
+    }
+    .card h4 {
+      font-size: 1.05rem;
+      margin-bottom: 6px;
+    }
+    .card p {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      margin-bottom: 0;
+    }
+
+    /* Code Blocks */
+    .code-block {
+      position: relative;
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin: 16px 0;
+      overflow: hidden;
+    }
+    .code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 14px;
+      background: #090d16;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.78rem;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-muted);
+    }
+    .copy-btn {
+      background: transparent;
+      border: 1px solid var(--border-accent);
+      color: #cbd5e1;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.15s ease;
+    }
+    .copy-btn:hover {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+    pre {
+      padding: 16px;
+      overflow-x: auto;
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      font-size: 0.88rem;
+      line-height: 1.55;
+      color: #e2e8f0;
+    }
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.85em;
+    }
+    pre code {
+      background: transparent;
+      padding: 0;
+    }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 0.9rem;
+    }
+    th, td {
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      text-align: left;
+    }
+    th {
+      background: #0f172a;
+      color: #fff;
+      font-weight: 700;
+    }
+    tr:nth-child(even) td {
+      background: rgba(255, 255, 255, 0.015);
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      aside.sidebar { display: none; }
+      main.content { padding: 24px 16px 60px; max-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navbar -->
+  <header class="navbar">
+    <a href="#" class="brand">
+      <span>🤖 Open-Agent-DB</span>
+      <span class="badge">v2.0.0</span>
+    </a>
+    <div class="nav-actions">
+      <a href="https://huggingface.co/datasets/ns0bj/open-agent-db" target="_blank" rel="noopener" class="nav-btn nav-btn-secondary">
+        🤗 Hugging Face Hub
+      </a>
+      <a href="https://github.com/nsozturk/open-agent-db" target="_blank" rel="noopener" class="nav-btn nav-btn-primary">
+        ★ Star on GitHub
+      </a>
+    </div>
+  </header>
+
+  <div class="container">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="search-box">
+        <input type="text" id="docSearch" placeholder="Search documentation..." autocomplete="off">
+      </div>
+      
+      <div class="nav-group-title">Getting Started</div>
+      <ul class="nav-list">
+        <li class="nav-item"><a href="#overview" class="active">Overview</a></li>
+        <li class="nav-item"><a href="#quickstart">Quick Start (Zero Install)</a></li>
+        <li class="nav-item"><a href="#installation">Global Installation</a></li>
+      </ul>
+
+      <div class="nav-group-title">Core Engines</div>
+      <ul class="nav-list">
+        <li class="nav-item"><a href="#vector-search">🧠 Semantic Vector Search</a></li>
+        <li class="nav-item"><a href="#sql-database">🗄️ Universal SQL Database</a></li>
+        <li class="nav-item"><a href="#huggingface">🤗 Hugging Face Integration</a></li>
+      </ul>
+
+      <div class="nav-group-title">Ecosystem & MCP</div>
+      <ul class="nav-list">
+        <li class="nav-item"><a href="#ecosystems">Supported Ecosystems</a></li>
+        <li class="nav-item"><a href="#mcp-servers">MCP Registries (113k+)</a></li>
+        <li class="nav-item"><a href="#agent-spec">AI Agent Integration</a></li>
+      </ul>
+
+      <div class="nav-group-title">Automation & CLI</div>
+      <ul class="nav-list">
+        <li class="nav-item"><a href="#cli-reference">CLI Command Reference</a></li>
+        <li class="nav-item"><a href="#monthly-sync">Aylık Senkronizasyon</a></li>
+      </ul>
+    </aside>
+
+    <!-- Main Documentation Body -->
+    <main class="content">
+
+      <!-- Banner Hero -->
+      <div class="banner-hero">
+        <img src="assets/banner.png" onerror="this.src='../assets/banner.png'" alt="Open-Agent-DB — The Universal AI Agent & MCP Hub">
+      </div>
+
+      <!-- SEO Tag Chips -->
+      <div class="tag-row">
+        <span class="tag-chip">ai-agents</span>
+        <span class="tag-chip">model-context-protocol</span>
+        <span class="tag-chip">mcp-servers</span>
+        <span class="tag-chip">claude-skills</span>
+        <span class="tag-chip">cursor-rules</span>
+        <span class="tag-chip">vector-database</span>
+        <span class="tag-chip">semantic-search</span>
+        <span class="tag-chip">sqlite-fts5</span>
+        <span class="tag-chip">faiss</span>
+      </div>
+
+      <!-- SECTION: Overview -->
+      <section id="overview">
+        <h1>Open-Agent-DB</h1>
+        <p><strong>The Universal Open Database and Semantic Vector Search Engine for AI Agent Skills, MCP Servers, Project Directives, and Rules.</strong></p>
+        <p>Open-Agent-DB aggregates and indexes over <strong>3,480,000+ Agent Assets</strong> and <strong>113,000+ Model Context Protocol (MCP) Servers</strong> across every major AI coding assistant ecosystem, including Anthropic Claude Code, Cursor, OpenAI Codex, Google Gemini, GitHub Copilot, and OpenCode.</p>
+        
+        <div class="grid">
+          <div class="card">
+            <div class="card-icon">⚡</div>
+            <h4>Sub-second Full-Text Search</h4>
+            <p>SQLite FTS5 query engine provides instant search across 3.48M+ records and source files.</p>
+          </div>
+          <div class="card">
+            <div class="card-icon">🧠</div>
+            <h4>Semantic Vector Engine</h4>
+            <p>Pre-computed 128-dimensional dense vector embeddings for natural language similarity search.</p>
+          </div>
+          <div class="card">
+            <div class="card-icon">📦</div>
+            <h4>Unified Hugging Face Hub</h4>
+            <p>Dual-engine hosting: both Vector Parquet and 30+ GB SQL archives available under one dataset.</p>
+          </div>
+          <div class="card">
+            <div class="card-icon">🔌</div>
+            <h4>1-Click Installer</h4>
+            <p>Direct export and install to <code>~/.claude/skills/</code>, Cursor rules, and Claude Desktop configs.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION: Quick Start -->
+      <section id="quickstart">
+        <h2>⚡ Quick Start (Zero-Install)</h2>
+        <p>You can run Open-Agent-DB immediately using Node.js without downloading or configuring anything:</p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span>bash — instant search via npx</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code># Search across all indexed assets
+npx open-agent-db search "postgres"
+
+# Inspect MCP server details & install command
+npx open-agent-db info "Prisma Postgres"
+
+# Generate Claude Desktop MCP JSON config snippet
+npx open-agent-db install "Prisma Postgres"</code></pre>
+        </div>
+      </section>
+
+      <!-- SECTION: Installation -->
+      <section id="installation">
+        <h2>📦 Global Installation</h2>
+        
+        <h3>Via NPM (Node.js ecosystem)</h3>
+        <div class="code-block">
+          <div class="code-header">
+            <span>bash — npm</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code>npm install -g open-agent-db
+open-agent search "docker"</code></pre>
+        </div>
+
+        <h3>Via Pip (Python & AI ecosystem)</h3>
+        <div class="code-block">
+          <div class="code-header">
+            <span>bash — pip</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code>pip install open-agent-db
+open-agent search "react"</code></pre>
+        </div>
+      </section>
+
+      <!-- SECTION: Vector Search -->
+      <section id="vector-search">
+        <h2>🧠 Semantic Vector Search</h2>
+        <p>Open-Agent-DB includes a native Vector Search Engine that allows natural language semantic queries over skills, tools, and directives:</p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span>bash — python vector search</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code># Natural language semantic query
+python3 vector_search.py "automate database schema migrations with safety checks"
+
+# Search for specific tools with top-K limit
+python3 vector_search.py "ios swift metal shader visual effects" --top-k 5
+
+# Rebuild local vector embeddings index from SQLite
+python3 vector_search.py --build --limit 50000</code></pre>
+        </div>
+      </section>
+
+      <!-- SECTION: SQL Database -->
+      <section id="sql-database">
+        <h2>🗄️ Universal SQL Database</h2>
+        <p>The complete offline SQLite database contains 3.48M+ assets with full text search (FTS5), schema indices, and raw BLOB files, compressed down to ~12 GB with Zstandard.</p>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span>bash — download & decompress</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code># Download compressed database via huggingface-cli
+hf download ns0bj/open-agent-db open_agent_db_sql.sqlite.zst --repo-type dataset --local-dir ./data
+
+# Decompress to pristine 31 GB SQLite database (takes ~10 seconds)
+unzstd ./data/open_agent_db_sql.sqlite.zst -o ./data/open_agent_db.sqlite
+
+# Query immediately with SQLite or DuckDB
+sqlite3 ./data/open_agent_db.sqlite "SELECT count(*) FROM assets;"</code></pre>
+        </div>
+      </section>
+
+      <!-- SECTION: Hugging Face -->
+      <section id="huggingface">
+        <h2>🤗 Hugging Face Hub Integration</h2>
+        <p>Open-Agent-DB provides a unified Hub on Hugging Face Datasets: <a href="https://huggingface.co/datasets/ns0bj/open-agent-db" target="_blank" style="color:var(--accent-light);">ns0bj/open-agent-db</a>.</p>
+
+        <h3>Loading Vector Embeddings in Python (2 Lines)</h3>
+        <div class="code-block">
+          <div class="code-header">
+            <span>python — datasets & FAISS</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code>from datasets import load_dataset
+
+# Load vector embeddings directly from Hugging Face
+dataset = load_dataset("ns0bj/open-agent-db", data_files="open_agent_db_vectors.parquet", split="train")
+
+# Add native FAISS index for sub-millisecond similarity search
+dataset.add_faiss_index(column="embedding")
+scores, samples = dataset.get_nearest_examples("embedding", query_vector, k=5)</code></pre>
+        </div>
+      </section>
+
+      <!-- SECTION: Ecosystems -->
+      <section id="ecosystems">
+        <h2>🧩 Supported Ecosystems</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Ecosystem</th>
+              <th>Target Files</th>
+              <th>Asset Kind</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>MCP</strong></td>
+              <td><code>mcp.json</code>, APIs</td>
+              <td><code>mcp_server</code></td>
+              <td>Official Anthropic Registry, Glama, Smithery, Awesome MCP</td>
+            </tr>
+            <tr>
+              <td><strong>Claude Code</strong></td>
+              <td><code>CLAUDE.md</code>, <code>.claude/agents/*.md</code></td>
+              <td><code>project_rules</code>, <code>agent_brief</code></td>
+              <td>Anthropic Claude Code CLI configurations &amp; personas</td>
+            </tr>
+            <tr>
+              <td><strong>Cursor</strong></td>
+              <td><code>.cursorrules</code>, <code>*.mdc</code></td>
+              <td><code>project_rules</code>, <code>trigger_rule</code></td>
+              <td>Cursor IDE rules and trigger-based <code>.mdc</code> specifications</td>
+            </tr>
+            <tr>
+              <td><strong>OpenAI Codex</strong></td>
+              <td><code>.codex/agents/*.md</code></td>
+              <td><code>agent_brief</code>, <code>workflow</code></td>
+              <td>OpenAI Codex CLI agents and plugin specifications</td>
+            </tr>
+            <tr>
+              <td><strong>Google Gemini</strong></td>
+              <td><code>GEMINI.md</code>, skills</td>
+              <td><code>project_rules</code>, <code>skill</code></td>
+              <td>Google Antigravity &amp; Gemini CLI directives</td>
+            </tr>
+            <tr>
+              <td><strong>GitHub Copilot</strong></td>
+              <td><code>copilot-instructions.md</code></td>
+              <td><code>project_rules</code></td>
+              <td>GitHub Copilot Workspace custom guidelines</td>
+            </tr>
+            <tr>
+              <td><strong>Universal</strong></td>
+              <td><code>SKILL.md</code>, <code>AGENTS.md</code></td>
+              <td><code>skill</code>, <code>project_rules</code></td>
+              <td>Cross-platform open agent rules and tool skills</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- SECTION: MCP Servers -->
+      <section id="mcp-servers">
+        <h2>🔌 MCP Server Registry (113k+)</h2>
+        <p>Open-Agent-DB unifies the world's leading Model Context Protocol repositories into a single index:</p>
+        <ul>
+          <li><strong>Glama MCP Registry</strong>: 86,800+ indexed servers with category classification.</li>
+          <li><strong>Official Anthropic Registry</strong>: 15,600+ verified MCP servers.</li>
+          <li><strong>Smithery.ai</strong>: 10,000+ servers with one-click install commands.</li>
+          <li><strong>Awesome MCP</strong>: 3,800+ curated developer utilities.</li>
+        </ul>
+      </section>
+
+      <!-- SECTION: AI Agent Spec -->
+      <section id="agent-spec">
+        <h2>🤖 AI Agent Integration</h2>
+        <p>Equip your coding assistants (Claude Code, Cursor, Codex, Gemini) with Open-Agent-DB capabilities by referencing <code>AGENTS.md</code> or installing the global agent directive:</p>
+        
+        <div class="code-block">
+          <div class="code-header">
+            <span>markdown — agent instruction rule</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code># Open-Agent-DB Integration Rule
+When searching for existing skills, MCP servers, or project rules:
+1. Run: npx open-agent-db search "<query>"
+2. Inspect server config: npx open-agent-db info "<server-name>"
+3. Apply canonical SKILL.md and AGENTS.md conventions from open-agent-db.</code></pre>
+        </div>
+      </section>
+
+      <!-- SECTION: CLI Reference -->
+      <section id="cli-reference">
+        <h2>💻 CLI Command Reference</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Command</th>
+              <th>Description</th>
+              <th>Example</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>search</code></td>
+              <td>Search skills &amp; MCP servers by keyword or ecosystem</td>
+              <td><code>open-agent search "prisma" --ecosystem mcp</code></td>
+            </tr>
+            <tr>
+              <td><code>info</code></td>
+              <td>Display detailed metadata, parameters, and install code</td>
+              <td><code>open-agent info "Brave Search"</code></td>
+            </tr>
+            <tr>
+              <td><code>install</code></td>
+              <td>Output ready-to-use JSON for Claude Desktop / Cursor</td>
+              <td><code>open-agent install "gmail"</code></td>
+            </tr>
+            <tr>
+              <td><code>stats</code></td>
+              <td>Show breakdown of indexed ecosystems &amp; asset counts</td>
+              <td><code>open-agent stats</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- SECTION: Monthly Sync -->
+      <section id="monthly-sync">
+        <h2>🔄 Aylık Otomatik Senkronizasyon</h2>
+        <p>Open-Agent-DB uses an automated incremental pipeline scheduled via macOS <code>launchd</code> on the 1st of every month at 03:00 AM:</p>
+        <ul>
+          <li><strong>Delta Harvester</strong>: Fetches newly published MCP servers and GitHub assets.</li>
+          <li><strong>Vector Re-indexing</strong>: Generates dense embeddings for new records.</li>
+          <li><strong>Online Snapshot &amp; zstd</strong>: Creates a pristine SQLite backup without interrupting active writers.</li>
+          <li><strong>Hugging Face Push</strong>: Updates the unified dataset at <code>ns0bj/open-agent-db</code>.</li>
+        </ul>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    // Copy code snippet helper
+    function copyCode(btn) {
+      const code = btn.closest('.code-block').querySelector('pre code').innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        const orig = btn.innerText;
+        btn.innerText = 'Copied!';
+        setTimeout(() => { btn.innerText = orig; }, 1800);
+      });
+    }
+
+    // Sidebar search filter
+    const searchInput = document.getElementById('docSearch');
+    const sections = document.querySelectorAll('main.content section');
+    const navLinks = document.querySelectorAll('.sidebar .nav-item a');
+
+    searchInput.addEventListener('input', (e) => {
+      const q = e.target.value.toLowerCase().trim();
+      navLinks.forEach(link => {
+        const text = link.innerText.toLowerCase();
+        link.parentElement.style.display = (!q || text.includes(q)) ? 'block' : 'none';
+      });
+    });
+
+    // Active link highlighting on scroll
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(sec => {
+        const top = sec.offsetTop - 100;
+        if (window.scrollY >= top) {
+          current = sec.getAttribute('id');
+        }
+      });
+      navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === '#' + current) {
+          link.classList.add('active');
+        }
+      });
+    });
+  </script>
+</body>
+</html>
