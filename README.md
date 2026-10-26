@@ -13,6 +13,7 @@
   <img src="https://img.shields.io/badge/vector%20db-Parquet%20Dense%20Embeddings-success?style=flat-square" alt="Vector DB" />
   <img src="https://img.shields.io/badge/database-SQLite%20FTS5-blue?style=flat-square&logo=sqlite&logoColor=white" alt="Database" />
   <a href="https://huggingface.co/datasets/ns0bj/open-agent-db"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Datasets%20%26%20Vectors-yellow?style=flat-square" alt="Hugging Face" /></a>
+  <a href="https://evren.ssyz.org.tr/datasets/u4be40c9fa813/open-agent-db"><img src="https://img.shields.io/badge/EVREN-NLP%20Dataset-14b8a6?style=flat-square" alt="EVREN dataset" /></a>
   <a href="AGENTS.md"><img src="https://img.shields.io/badge/AI%20Agent-Native%20Ready-blueviolet?style=flat-square" alt="AI Agent Ready" /></a>
   <a href="https://nsozturk.github.io/open-agent-db/"><img src="https://img.shields.io/badge/docs-GitHub%20Pages-00bcd4?style=flat-square" alt="Docs" /></a>
   <img src="https://img.shields.io/badge/license-MIT-green?style=flat-square" alt="License" />
@@ -135,6 +136,8 @@ python3 vector_search.py --build --limit 50000
 ## 🤗 Hugging Face Integration
 
 Open-Agent-DB provides a unified Hub on Hugging Face Datasets ([`ns0bj/open-agent-db`](https://huggingface.co/datasets/ns0bj/open-agent-db)) hosting two core databases:
+
+The metadata catalogue (3.65M unified rows + 150K MCP registry items, metadata only, secrets redacted) is also published on Türkiye's EVREN AI platform as an NLP dataset: [`open-agent-db` on EVREN](https://evren.ssyz.org.tr/datasets/u4be40c9fa813/open-agent-db) — uploaded with [evren-platform-api](https://github.com/nsozturk/evren-platform-api).
 
 ### 1. 🧠 Semantic Vector DB (`open_agent_db_vectors.parquet`)
 Pre-computed dense 128-dimensional float32 vector embeddings over Agent Skills, MCP Servers, and Directives. Ready for instant semantic similarity search via FAISS, cosine distance, or LanceDB.
